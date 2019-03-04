@@ -1,7 +1,7 @@
 {
   "name": "image-augment",
   "version": "0.0.1",
-  "description": "Image augmentation using opencv4nodejs",
+  "description": "Image augmentation library for machine learning in javascript.",
   "main": "index.js",
   "scripts": {
     "lint": "xo",
