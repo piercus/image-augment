@@ -81,3 +81,12 @@ test('affine all', macroAugmenter, AffineTransform, {
 		borderType: 'constant'
 	}
 });
+
+test('affine transparent image to transparent border', macroAugmenter, AffineTransform, {
+	input: path.join(__dirname, '..', 'data/lenna-with-alpha.png'),
+	options: {
+		rotate: 10,
+		borderType: 'transparent',
+		borderValue: [255, 0, 0]
+	}
+});

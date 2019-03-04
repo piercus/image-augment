@@ -31,3 +31,12 @@ test('perspective-transform sigma 6 with bordervalue and replicate border', macr
 		borderType: 'replicate'
 	}
 });
+
+test('perspective transparent image to transparent border', macroAugmenter, PerspectiveTransform, {
+	input: path.join(__dirname, '..', 'data/lenna-with-alpha.png'),
+	options: {
+		cornersVariation: [[-0.3, -0.3], [-0.2, -0.2], [-0.3, -0.3], [-0.1, -0.1]],
+		borderType: 'transparent',
+		borderValue: [255, 0, 0]
+	}
+});

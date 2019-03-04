@@ -4,7 +4,11 @@ module.exports = function (t, Cstr, {input, output, options, backend = backends.
 	const inst = new Cstr(options);
 	const img = backend.readImage(input);
 	const res = inst.runOnce({img});
-
+	
+	if(!output){
+		t.pass()
+		return Promise.resolve()
+	}
 	const expected = backend.readImage(output);
 
 	const data2 = backend.imageToBuffer(expected);
