@@ -1,17 +1,47 @@
 const backends = require('../../lib/backend');
 
-module.exports = function (t, Cstr, {input, output, options, backend = backends.getDefault()}) {
+module.exports = function (t, Cstr, {
+	input, 
+	output, 
+	options, 
+	inputPoints,
+	outputPoints,
+	backend = backends.getDefault()
+}) {
 	const inst = new Cstr(options);
 	const img = backend.readImage(input);
 	const res = inst.runOnce({img});
 	
-	if(!output){
-		t.pass()
-		return Promise.resolve()
-	}
-	const expected = backend.readImage(output);
+	return Promise.resolve().then(() => {
+		if(!output){
+			t.pass()
+			return Promise.resolve()
+		}
+		
+		const expected = backend.readImage(output);
 
-	const data2 = backend.imageToBuffer(expected);
-	t.true(backend.imageToBuffer(res.img).equals(data2));
-	return Promise.resolve();
+		const data2 = backend.imageToBuffer(expected);
+		t.true(backend.imageToBuffer(res.img).equals(data2));
+		return Promise.resolve()
+	}).then(() =>{
+		if(!inputPoints && !outputPoints){
+			t.pass()
+			return Promise.resolve()
+		} 
+		const width = img.cols;
+		const height = img.rows;
+		const toSize = ([x,y]) => ([x*width, y*height])
+		const res = inst.runOnce({img, points: inputPoints.map(toSize)});
+		
+		const expected = outputPoints.map(toSize).map(a => backend.point(...a));
+		const tolerance = 0.01*(width+height)/2;
+		res.points.forEach((p, index) => {
+			//console.log({actual: p.x, expected: expected[index].x, res: Math.abs(p.x - expected[index].x) < tolerance})
+			t.true(Math.abs(p.x - expected[index].x) < tolerance)
+			t.true(Math.abs(p.y - expected[index].y) < tolerance)
+		});
+		
+	})
+	
+
 };

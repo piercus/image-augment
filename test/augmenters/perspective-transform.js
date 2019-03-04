@@ -6,6 +6,8 @@ const macroAugmenter = require('../macros/augmenter');
 test('perspective-transform sigma 4 and transparent', macroAugmenter, PerspectiveTransform, {
 	input: path.join(__dirname, '..', 'data/lenna.png'),
 	output: path.join(__dirname, '..', 'data/lenna-perspective-transform-transparent.png'),
+	inputPoints: [[0, 0], [1, 0], [0, 1], [1, 1]],
+	outputPoints: [[0.1, 0.1], [1.2, -0.2], [-0.3, 1.3], [1, 1]],
 	options: {
 		cornersVariation: [[0.1, 0.1], [0.2, -0.2], [-0.3, 0.3], [0, 0]],
 		borderType: 'transparent',
