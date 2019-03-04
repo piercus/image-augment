@@ -1,0 +1,46 @@
+{
+  "name": "image-augment",
+  "version": "0.0.1",
+  "description": "Image augmentation using opencv4nodejs",
+  "main": "index.js",
+  "scripts": {
+    "lint": "xo",
+    "test": "nyc ava test/augmenters/*",
+    "semantic-release": "semantic-release",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piercus/image-augment.git"
+  },
+  "keywords": [
+    "image",
+    "augmentation",
+    "augment",
+    "imgaug",
+    "opencv",
+    "img",
+    "combinatoire",
+    "hasard",
+    "random",
+    "generation",
+    "ml",
+    "deep",
+    "learning"
+  ],
+  "author": "Pierre Colle <piercus@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/piercus/image-augment/issues"
+  },
+  "homepage": "https://github.com/piercus/image-augment#readme",
+  "devDependencies": {
+    "ava": "^1.2.1",
+    "semantic-release": "^15.13.3",
+    "xo": "^0.24.0"
+  },
+  "dependencies": {
+    "hasard": "^1.3.0",
+    "opencv4nodejs": "^4.14.1"
+  }
+}
