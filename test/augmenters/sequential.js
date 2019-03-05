@@ -1,6 +1,6 @@
 const path = require('path');
 const test = require('ava');
-const Sequential = require('../../lib/augmenters/sequential')
+const Sequential = require('../../lib/augmenters/sequential');
 const Blur = require('../../lib/augmenters/blur');
 const Resize = require('../../lib/augmenters/blur');
 

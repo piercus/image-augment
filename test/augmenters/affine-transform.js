@@ -6,7 +6,7 @@ const macroAugmenter = require('../macros/augmenter');
 test('affine scale 0.5 replicate', macroAugmenter, AffineTransform, {
 	input: path.join(__dirname, '..', 'data/lenna.png'),
 	output: path.join(__dirname, '..', 'data/lenna-affine-scale-0.5.png'),
-	// inputPoints: [[0, 0], [1, 0], [0, 1], [1, 1]],
+	// InputPoints: [[0, 0], [1, 0], [0, 1], [1, 1]],
 	// outputPoints: [[0.25, 0.25], [0.75, 0.25], [0.25, 0.75], [0.75, 0.75]],
 	options: {
 		scale: 0.5,
@@ -41,7 +41,7 @@ test('affine translatePercent 0.1, -0.2', macroAugmenter, AffineTransform, {
 	input: path.join(__dirname, '..', 'data/lenna.png'),
 	output: path.join(__dirname, '..', 'data/lenna-affine-translate-10-20.png'),
 	inputPoints: [[0, 0], [0, 1]],
-	outputPoints: [[0.1+0.25, -0.2+0.25], [0.1+0.25, 0.75-0.2]],
+	outputPoints: [[0.1 + 0.25, -0.2 + 0.25], [0.1 + 0.25, 0.75 - 0.2]],
 	options: {
 		scale: 0.5,
 		translatePercent: [0.1, -0.2],

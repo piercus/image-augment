@@ -1,1 +1,1 @@
-module.exports = require('./lib/image-augment')
+module.exports = require('./lib/image-augment');
