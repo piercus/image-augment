@@ -2,11 +2,12 @@ language: node_js
 node_js:
   - '8'
 install:
-  - npm install -g codecov nyc npx
+  - npm install -g codecov nyc doxdox
   - npm install
 
 script:
   - npm run lint
+  - npm run doc
   - npm test
 
 after_success:
