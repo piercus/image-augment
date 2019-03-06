@@ -20,6 +20,7 @@ module.exports = function (t, Cstr, {
 				return Promise.resolve();
 			}
 
+			// Backend.writeImage(output, res.img);
 			const expected = backend.readImage(output);
 
 			const data2 = backend.imageToBuffer(expected);
