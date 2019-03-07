@@ -12,7 +12,7 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 		const diff = backend.diff(mat1, mat2);
 		const norm = backend.normL1(diff) / (metadata.width * metadata.height * metadata.channels);
 
-		t.true(Math.abs(norm - mean) < 1e-1);
+		t.true(Math.abs(norm - mean) < 100/Math.sqrt((metadata.width * metadata.height * metadata.channels)));
 
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
 
@@ -27,7 +27,7 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 	},
 	options: {
 		mean,
-		sigma: 2,
+		std: 2,
 		perChannel: false
 	}
 });

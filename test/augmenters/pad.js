@@ -34,7 +34,7 @@ test('pad 10%x30%x0%x5% with transparent border', macroAugmenter, Pad, {
 });
 test('pad transparent image to transparent border', macroAugmenter, Pad, {
 	input: path.join(__dirname, '..', 'data/lenna-with-alpha.png'),
-	output: path.join(__dirname, '..', 'data/lenna-pad-10x30x0x5.png'),
+	output: path.join(__dirname, '..', 'data/lenna-pad-transparent-10x30x0x5.png'),
 	options: {
 		percent: [0.1, 0.3, 0, 0.05],
 		borderType: 'transparent',
