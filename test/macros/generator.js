@@ -18,8 +18,7 @@ module.exports = function (t, Cstr, {
 			if (!debugOutput) {
 				return Promise.resolve();
 			}
-
-			backend.writeImage(debugOutput, res);
+			backend.writeImage(debugOutput, res.resize(200,200));
 		})
 		.then(() => {
 			if (!expectImg) {
