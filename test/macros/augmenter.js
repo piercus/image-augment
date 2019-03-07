@@ -4,6 +4,7 @@ module.exports = function (t, Cstr, {
 	input,
 	output,
 	options,
+	debugOutput,
 	inputPoints,
 	outputPoints,
 	expectImg,
@@ -26,6 +27,13 @@ module.exports = function (t, Cstr, {
 			const data2 = backend.imageToBuffer(expected);
 			t.true(backend.imageToBuffer(res.img).equals(data2));
 			return Promise.resolve();
+		})
+		.then(() => {
+			if (!debugOutput) {
+				return Promise.resolve();
+			}
+			console.log(debugOutput)
+			backend.writeImage(debugOutput, res.img);
 		})
 		.then(() => {
 			if (!expectImg) {
