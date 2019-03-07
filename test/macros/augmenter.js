@@ -32,7 +32,8 @@ module.exports = function (t, Cstr, {
 			if (!debugOutput) {
 				return Promise.resolve();
 			}
-			console.log(debugOutput)
+
+			console.log(`Save file for debugging in ${debugOutput}`);
 			backend.writeImage(debugOutput, res.img);
 		})
 		.then(() => {

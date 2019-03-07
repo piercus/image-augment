@@ -3,14 +3,14 @@ const backends = require('../../lib/backend');
 module.exports = function (t, Cstr, {
 	debugOutput,
 	expectImg,
-	width, 
+	width,
 	height,
 	channels,
 	options,
 	backend = backends.getDefault()
 }) {
 	const inst = new Cstr(options);
-	const hasardInst = inst.build({width, height, channels})
+	const hasardInst = inst.build({width, height, channels});
 	const res = hasardInst.runOnce();
 
 	return Promise.resolve()
@@ -18,7 +18,8 @@ module.exports = function (t, Cstr, {
 			if (!debugOutput) {
 				return Promise.resolve();
 			}
-			backend.writeImage(debugOutput, res.resize(200,200));
+
+			backend.writeImage(debugOutput, res.resize(200, 200));
 		})
 		.then(() => {
 			if (!expectImg) {
