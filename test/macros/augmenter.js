@@ -11,8 +11,8 @@ module.exports = function (t, Cstr, {
 	backend = backends.getDefault()
 }) {
 	const inst = new Cstr(options);
-	const img = backend.readImage(input);
-	const res = inst.runOnce({img});
+	const image = backend.readImage(input);
+	const res = inst.runOnce({image});
 
 	return Promise.resolve()
 		.then(() => {
@@ -21,11 +21,11 @@ module.exports = function (t, Cstr, {
 				return Promise.resolve();
 			}
 
-			// Backend.writeImage(output, res.img);
+			// Backend.writeImage(output, res.image);
 			const expected = backend.readImage(output);
 
 			const data2 = backend.imageToBuffer(expected);
-			t.true(backend.imageToBuffer(res.img).equals(data2));
+			t.true(backend.imageToBuffer(res.image).equals(data2));
 			return Promise.resolve();
 		})
 		.then(() => {
@@ -34,7 +34,7 @@ module.exports = function (t, Cstr, {
 			}
 
 			console.log(`Save file for debugging in ${debugOutput}`);
-			backend.writeImage(debugOutput, res.img);
+			backend.writeImage(debugOutput, res.image);
 		})
 		.then(() => {
 			if (!expectImg) {
@@ -42,7 +42,7 @@ module.exports = function (t, Cstr, {
 				return Promise.resolve();
 			}
 
-			expectImg(t, img, res.img, backend);
+			expectImg(t, image, res.image, backend);
 		})
 		.then(() => {
 			if (!inputPoints && !outputPoints) {
@@ -50,10 +50,10 @@ module.exports = function (t, Cstr, {
 				return Promise.resolve();
 			}
 
-			const width = img.cols;
-			const height = img.rows;
+			const width = image.cols;
+			const height = image.rows;
 			const toSize = ([x, y]) => ([x * width, y * height]);
-			const res = inst.runOnce({img, points: inputPoints.map(toSize)});
+			const res = inst.runOnce({image, points: inputPoints.map(toSize)});
 
 			const expected = outputPoints.map(toSize).map(a => backend.point(...a));
 			const tolerance = 1e-6 * (width + height) / 2;
