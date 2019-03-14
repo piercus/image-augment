@@ -1,18 +1,24 @@
 const allBackends = require('../../lib/backend');
-
+const path = require('path')
 module.exports = function (t, Cstr, {
-	input,
-	output,
+	inputFilename,
+	outputFilename,
 	options,
 	debugOutput,
 	inputPoints,
 	outputPoints,
 	expectImg,
-	backends = ['opencv4nodejs']//, 'tfjs-node-gpu']
+	backends = ['opencv4nodejs', 'tfjs']
 }) {
-	const bckds = backends.map(b => allBackends.get(b));
-	return Promise.all(bckds.map(backend => {
-		const inst = new Cstr(options);
+	return Promise.all(backends.map(bKey => {
+		const backend = allBackends.get(bKey);
+		const inst = new Cstr(Object.assign({}, options, {backend: bKey}));
+		const input = path.join(__dirname, '../data', bKey, inputFilename)
+		let output;
+		if(outputFilename){
+			output = path.join(__dirname, '../data', bKey, outputFilename)
+		}
+		
 		return backend.readImage(input)
 			.then(image => {
 				return inst.runAugmenter({image}).then(res => {
@@ -20,9 +26,14 @@ module.exports = function (t, Cstr, {
 						t.pass();
 						return Promise.resolve(res);
 					}
-
-					// Backend.writeImage(output, res.image);
-					return backend.readImage(output).then(expected => {
+					let promise = Promise.resolve();
+					if(bKey === 'tfjs'){
+						promise = backend.writeImage(output, res.image);
+					}
+					
+					return promise.then(() => {
+						return backend.readImage(output)
+					}).then(expected => {
 						return Promise.all([
 							backend.imageToBuffer(expected),
 							backend.imageToBuffer(res.image)

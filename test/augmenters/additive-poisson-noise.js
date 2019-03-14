@@ -6,7 +6,7 @@ const macroAugmenter = require('../macros/augmenter');
 const lambda = 4;
 
 test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise, {
-	input: path.join(__dirname, '..', 'data/lenna.png'),
+	inputFilename: 'lenna.png',
 	expectImg(t, mat1, mat2, backend) {
 		const absdiff = backend.absdiff(mat1, mat2);
 		const metadata = backend.getMetadata(mat1);
@@ -36,7 +36,7 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 });
 
 test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
-	input: path.join(__dirname, '..', 'data/lenna.png'),
+	inputFilename: 'lenna.png',
 	expectImg(t, mat1, mat2, backend) {
 		const diff = backend.absdiff(mat1, mat2);
 		const metadata = backend.getMetadata(mat1);
@@ -59,7 +59,7 @@ test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 });
 
 test('additivePoissonNoiseperChannel with scale', macroAugmenter, AdditivePoissonNoise, {
-	input: path.join(__dirname, '..', 'data/lenna-with-alpha.png'),
+	inputFilename: 'lenna-with-alpha.png',
 	options: {
 		lambda,
 		scale: 0.2,

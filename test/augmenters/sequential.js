@@ -7,8 +7,8 @@ const Resize = require('../../lib/augmenters/resize');
 const macroAugmenter = require('../macros/augmenter');
 
 test('sequential blur then resize', macroAugmenter, Sequential, {
-	input: path.join(__dirname, '..', 'data/lenna.png'),
-	output: path.join(__dirname, '..', 'data/lenna-seq-blur-resize.png'),
+	inputFilename: 'lenna.png',
+	outputFilename: 'lenna-seq-blur-resize.png',
 	options: {
 		steps: [
 			new Blur({
