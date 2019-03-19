@@ -27,9 +27,9 @@ module.exports = function (t, Cstr, {
 						return Promise.resolve(res);
 					}
 					let promise = Promise.resolve();
-					if(bKey === 'tfjs'){
-						promise = backend.writeImage(output, res.image);
-					}
+					// if(bKey === 'tfjs'){
+					// 	promise = backend.writeImage(output, res.image);
+					// }
 					
 					return promise.then(() => {
 						return backend.readImage(output)
