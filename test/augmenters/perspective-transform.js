@@ -6,6 +6,9 @@ const macroAugmenter = require('../macros/augmenter');
 test('perspective-transform sigma 4 and transparent', macroAugmenter, PerspectiveTransform, {
 	inputFilename: 'lenna.png',
 	outputFilename: 'lenna-perspective-transform-transparent.png',
+	backends: [
+		'opencv4nodejs'
+	],
 	inputPoints: [[0, 0], [1, 0], [0, 1], [1, 1]],
 	outputPoints: [[0.1, 0.1], [1.2, -0.2], [-0.3, 1.3], [1, 1]],
 	options: {
@@ -18,6 +21,9 @@ test('perspective-transform sigma 4 and transparent', macroAugmenter, Perspectiv
 test('perspective-transform sigma 6 with bordervalue and constant border', macroAugmenter, PerspectiveTransform, {
 	inputFilename: 'lenna.png',
 	outputFilename: 'lenna-perspective-transform-constant.png',
+	backends: [
+		'opencv4nodejs'
+	],
 	options: {
 		cornersVariation: [[-0.3, -0.3], [-0.2, -0.2], [-0.3, -0.3], [-0.1, -0.1]],
 		borderType: 'constant',
@@ -28,6 +34,9 @@ test('perspective-transform sigma 6 with bordervalue and constant border', macro
 test('perspective-transform sigma 6 with bordervalue and replicate border', macroAugmenter, PerspectiveTransform, {
 	inputFilename: 'lenna.png',
 	outputFilename: 'lenna-perspective-transform-replicate.png',
+	backends: [
+		'opencv4nodejs'
+	],
 	options: {
 		cornersVariation: [[-0.3, -0.3], [-0.2, -0.2], [-0.3, -0.3], [-0.1, -0.1]],
 		borderType: 'replicate'
@@ -36,6 +45,9 @@ test('perspective-transform sigma 6 with bordervalue and replicate border', macr
 
 test('perspective transparent image to transparent border', macroAugmenter, PerspectiveTransform, {
 	inputFilename: 'lenna-with-alpha.png',
+	backends: [
+		'opencv4nodejs'
+	],
 	options: {
 		cornersVariation: [[-0.3, -0.3], [-0.2, -0.2], [-0.3, -0.3], [-0.1, -0.1]],
 		borderType: 'transparent',

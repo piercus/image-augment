@@ -21,9 +21,9 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 
 		let count = 0;
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
-		const m2 = mat2.getDataAsArray();
+		const m2 = backend.imageToArray(mat2);
 		backend.forEachPixel(absdiff, ([b, g, r], rowIndex, colIndex) => {
-			if (m2[rowIndex][colIndex].indexOf(255) === -1 && m2[rowIndex][colIndex].indexOf(0) === -1 && (r !== g || g !== b)) {
+			if (m2[rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
 			}
 		});
@@ -37,6 +37,7 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 
 test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 	inputFilename: 'lenna.png',
+	backends: ['tfjs'],
 	expectImg(t, mat1, mat2, backend) {
 		const diff = backend.absdiff(mat1, mat2);
 		const metadata = backend.getMetadata(mat1);
@@ -44,9 +45,9 @@ test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 		t.true(norm > lambda * 2 / 3);
 		t.true(norm < lambda * 4 / 3);
 		let count = 0;
-		const m2 = mat2.getDataAsArray();
+		const m2 = backend.imageToArray(mat2);
 		backend.forEachPixel(diff, ([b, g, r], rowIndex, colIndex) => {
-			if (m2[rowIndex][colIndex].indexOf(255) === -1 && m2[rowIndex][colIndex].indexOf(0) === -1 && (r !== g || g !== b)) {
+			if (m2[rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
 			}
 		});
