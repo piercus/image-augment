@@ -7,28 +7,37 @@ const allBackends = require('../../lib/backend');
 module.exports = function (t, Cstr, {
 	inputFilename,
 	outputFilename,
+	inputFilenames = [],
 	options,
 	debugOutput,
 	inputPoints,
 	outputPoints,
 	expectImg,
-	backends = ['opencv4nodejs', 'tfjs']
+	backends = [
+		require('@tensorflow/tfjs-node-gpu'),
+		require('opencv4nodejs')
+	]
 }) {
 	return PromiseBlue.map(backends, bKey => {
 		const backend = allBackends.get(bKey);
 		const inst = new Cstr(Object.assign({}, options, {backend: bKey}));
-		const input = path.join(__dirname, '../data', bKey, inputFilename);
+		let inputs
+		if(inputFilename){
+			inputs = [path.join(__dirname, '../data', backend.key, inputFilename)];
+		} else { // if(inputFilenames)
+			inputs = inputFilenames.map(inF => path.join(__dirname, '../data', backend.key, inF));
+		}
 		let output;
 		if (outputFilename) {
-			output = path.join(__dirname, '../data', bKey, outputFilename);
+			output = path.join(__dirname, '../data', backend.key, outputFilename);
 		}
 
-		return backend.readImages([input])
+		return backend.readImages(inputs)
 			.then(images => {
-				debug(`${Cstr.name}/${bKey} start `);
+				debug(`${Cstr.name}/${backend.key} start `);
 				return inst.runAugmenter({images})
 					.then(res => {
-						debug(`${Cstr.name}/${bKey} end`);
+						debug(`${Cstr.name}/${backend.key} end`);
 						if (!debugOutput) {
 							return Promise.resolve(res);
 						}
