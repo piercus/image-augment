@@ -9,8 +9,10 @@ test.only('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussi
 	inputFilename: 'lenna.png',
 	//backends: ['tfjs'],
 	//backends: ['opencv4nodejs'],
-	expectImg(t, mat1, mat2, backend) {
-		const metadata = backend.getMetadata(mat1);
+	expectImg(t, mats1, mats2, backend) {
+		const mat1 = backend.splitImages(mats1)[0];
+		const mat2 = backend.splitImages(mats2)[0];
+		const metadata = backend.getMetadata(mats1);
 		const diff = backend.diff(mat1, mat2);
 		const norm = backend.normL1(diff) / (metadata.width * metadata.height * 3);
 
@@ -38,7 +40,9 @@ test.only('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussi
 
 test('additiveGaussianNoise per Channel', macroAugmenter, AdditiveGaussianNoise, {
 	inputFilename: 'lenna.png',
-	expectImg(t, mat1, mat2, backend) {
+	expectImg(t, mats1, mats2, backend) {
+		const mat1 = backend.splitImages(mats1)[0];
+		const mat2 = backend.splitImages(mats2)[0];		
 		const diff = backend.diff(mat1, mat2);
 		let count = 0;
 		const m2 = backend.imageToArray(mat2);

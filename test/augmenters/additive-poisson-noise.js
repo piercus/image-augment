@@ -7,9 +7,11 @@ const lambda = 4;
 
 test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise, {
 	inputFilename: 'lenna.png',
-	expectImg(t, mat1, mat2, backend) {
+	expectImg(t, mats1, mats2, backend) {
+		const mat1 = backend.splitImages(mats1)[0];
+		const mat2 = backend.splitImages(mats2)[0];		
 		const absdiff = backend.absdiff(mat1, mat2);
-		const metadata = backend.getMetadata(mat1);
+		const metadata = backend.getMetadata(mats1);
 		const norm = backend.normL1(absdiff) / (metadata.width * metadata.height * metadata.channels);
 
 		t.true(norm > lambda * 2 / 3);
@@ -38,9 +40,11 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 	inputFilename: 'lenna.png',
 	backends: ['tfjs'],
-	expectImg(t, mat1, mat2, backend) {
+	expectImg(t, mats1, mats2, backend) {
+		const mat1 = backend.splitImages(mats1)[0];
+		const mat2 = backend.splitImages(mats2)[0];		
 		const diff = backend.absdiff(mat1, mat2);
-		const metadata = backend.getMetadata(mat1);
+		const metadata = backend.getMetadata(mats1);
 		const norm = backend.normL1(diff) / (metadata.width * metadata.height * metadata.channels);
 		t.true(norm > lambda * 2 / 3);
 		t.true(norm < lambda * 4 / 3);

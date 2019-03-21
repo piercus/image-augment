@@ -19,9 +19,20 @@ module.exports = function (t, Cstr, {
 			output = path.join(__dirname, '../data', bKey, outputFilename)
 		}
 		
-		return backend.readImage(input)
-			.then(image => {
-				return inst.runAugmenter({image}).then(res => {
+		return backend.readImages([input])
+			.then(images => {
+				return inst.runAugmenter({images})
+				.then(res => {
+					if (!debugOutput) {
+						return Promise.resolve(res);
+					}
+
+					console.log(`Save file for debugging in ${debugOutput}`);
+					return backend.writeImages([debugOutput], res.images).then(() => {
+						return res;
+					})
+				})
+				.then(res => {
 					if (!output) {
 						t.pass();
 						return Promise.resolve(res);
@@ -35,8 +46,8 @@ module.exports = function (t, Cstr, {
 						return backend.readImage(output)
 					}).then(expected => {
 						return Promise.all([
-							backend.imageToBuffer(expected),
-							backend.imageToBuffer(res.image)
+							backend.imagesToBuffer([expected]),
+							backend.imagesToBuffer(res.images)
 						])
 					})
 					.then(([actual2, expected2]) => {
@@ -46,22 +57,12 @@ module.exports = function (t, Cstr, {
 					})
 				})
 				.then(res => {
-					if (!debugOutput) {
-						return Promise.resolve(res);
-					}
-
-					console.log(`Save file for debugging in ${debugOutput}`);
-					return backend.writeImage(debugOutput, res.image).then(() => {
-						return res;
-					})
-				})
-				.then(res => {
 					if (!expectImg) {
 						t.pass();
 						return Promise.resolve();
 					}
 
-					expectImg(t, image, res.image, backend);
+					expectImg(t, images, res.images, backend);
 					return Promise.resolve(res)
 				})
 				.then(res => {
@@ -70,14 +71,12 @@ module.exports = function (t, Cstr, {
 						return Promise.resolve();
 					}
 
-					const width = image.cols;
-					const height = image.rows;
+					const {width, height} = backend.getMetadata(images);
 					const toSize = ([x, y]) => ([x * width, y * height]);
-					return inst.runAugmenter({image, points: inputPoints.map(toSize)}).then(res => {
+					return inst.runAugmenter({images, points: [inputPoints.map(toSize)]}).then(res => {
 						const expected = outputPoints.map(toSize).map(a => backend.point(...a));
 						const tolerance = 1e-6 * (width + height) / 2;
-						res.points.forEach((p, index) => {
-							// Console.log({actual: p.x, expected: expected[index].x, res: Math.abs(p.x - expected[index].x) < tolerance})
+						res.points[0].forEach((p, index) => {
 							t.true(Math.abs(p.x - expected[index].x) < tolerance);
 							t.true(Math.abs(p.y - expected[index].y) < tolerance);
 						});
