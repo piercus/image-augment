@@ -1,16 +1,17 @@
-const imageAugment = require('../../index')
+const path = require('path');
 const debug = require('debug')('image-augment:benchmark');
 const h = require('hasard');
-const PromiseBlue = require('bluebird')
-const allBackends = require('../../lib/backend');
+const PromiseBlue = require('bluebird');
 
 const backends = [
-	require('@tensorflow/tfjs-node'), 
-	require('opencv4nodejs'), 
+	require('@tensorflow/tfjs-node'),
+	require('opencv4nodejs'),
 	require('@tensorflow/tfjs-node-gpu')
 ];
+const allBackends = require('../../lib/backend');
+const imageAugment = require('../..');
 
-const filenames = new Array(100).fill('lenna.jpg');
+const filenames = new Array(2).fill(path.join(__dirname, '../data', 'opencv4nodejs', 'lenna.png'));
 
 PromiseBlue.map(backends, b => {
 	const startTime = new Date();
@@ -19,11 +20,11 @@ PromiseBlue.map(backends, b => {
 		backend: b,
 		steps: [
 			new imageAugment.AddWeighted({
-				value: h.array({size: 3, value: h.integer(0,255)}),
+				value: h.array({size: 3, value: h.integer(0, 255)}),
 				alpha: h.number(0, 0.5)
 			}),
 			new imageAugment.Add({
-				value: h.array({size: 3, value: h.integer(0,10)})
+				value: h.array({size: 3, value: h.integer(0, 10)})
 			}),
 			new imageAugment.AdditivePoissonNoise(h.integer(0, 3)),
 			new imageAugment.AdditiveGaussianNoise(h.number(0, 2)),
@@ -35,8 +36,8 @@ PromiseBlue.map(backends, b => {
 			new imageAugment.PerspectiveTransform(0.2),
 			new imageAugment.Resize(h.integer(150, 300))
 		]
-	})
-	
+	});
+
 	return augmenter.fromFilenames({
 		filenames
 	}).then(result => {
@@ -44,10 +45,10 @@ PromiseBlue.map(backends, b => {
 			result,
 			timeSpent: (new Date()) - startTime,
 			backendKey: b
-		}
+		};
 	});
 }, {concurrency: 1}).then(res => {
-	console.log('done', res)
-}).catch(err => {
-	console.log('error', err)
-})
+	console.log('done', res);
+}).catch(error => {
+	console.log('error', err);
+});

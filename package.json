@@ -50,7 +50,7 @@
   "homepage": "https://github.com/piercus/image-augment#readme",
   "devDependencies": {
     "@tensorflow/tfjs-node": "^0.3.2",
-    "@tensorflow/tfjs-node-gpu": "^1.0.2",
+    "@tensorflow/tfjs-node-gpu": "^0.3.2",
     "ava": "^1.2.1",
     "jimp": "^0.6.0",
     "semantic-release": "^15.13.3",

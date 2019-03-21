@@ -5,10 +5,10 @@ const macroAugmenter = require('../macros/augmenter');
 
 test('add weighted', macroAugmenter, AddWeighted, {
 	inputFilename: 'lenna.png',
-	outputFilename: 'lenna-light.png',	
-//	debugOutput: path.join(__dirname, '../..', 'tmp/lenna-light.png'),
+	outputFilename: 'lenna-light.png',
+	//	DebugOutput: path.join(__dirname, '../..', 'tmp/lenna-light.png'),
 	options: {
-		value: [255,255,255],
+		value: [255, 255, 255],
 		alpha: 0.3
 	}
 });

@@ -9,7 +9,7 @@ const channels = 3;
 const mean = 128;
 const sigma = 50;
 
-test('perspective-transform sigma 4 and transparent', macroGenerator, GaussianNoise, {
+test('gaussian-noise', macroGenerator, GaussianNoise, {
 	debugOutput: path.join(__dirname, '../..', 'tmp/gaussian-noise.png'),
 	expectImg: (t, img) => {
 		t.is(img.cols, width);
