@@ -14,8 +14,9 @@ module.exports = function (t, Cstr, {
 	outputPoints,
 	expectImg,
 	backends = [
-		require('@tensorflow/tfjs-node-gpu'),		
 		require('opencv4nodejs')
+		,
+		require('@tensorflow/tfjs-node-gpu')
 	]
 }) {
 	return PromiseBlue.map(backends, bKey => {
@@ -40,14 +41,21 @@ module.exports = function (t, Cstr, {
 				return inst.runAugmenter({images})
 					.then(res => {
 						debug(`${Cstr.name}/${backend.key} end`);
-						if (!debugOutput) {
+						let dbgOutput;
+						if(typeof(debugOutput) === 'object'){
+							dbgOutput = debugOutput[backend.key];
+						} else {
+							dbgOutput = debugOutput
+						}
+						
+						if (!dbgOutput) {
 							return Promise.resolve(res);
 						}
 
-						debug(`Save file for debugging in ${debugOutput}`);
+						debug(`Save file for debugging in ${dbgOutput}`);
 						
 						return backend.writeImages(
-							Array.isArray(debugOutput) ? debugOutput : [debugOutput], 
+							Array.isArray(dbgOutput) ? dbgOutput : [dbgOutput], 
 							res.images
 						).then(() => {
 							return res;
@@ -70,13 +78,17 @@ module.exports = function (t, Cstr, {
 							return Promise.all([
 								backend.imagesToBuffer([expected]),
 								backend.imagesToBuffer(res.images)
-							]);
-						})
-							.then(([actual2, expected2]) => {
-								t.true(actual2.equals(expected2));
-							}).then(() => {
-								return res;
+							]).then(([actual2, expected2]) => {
+								if(!actual2.equals(expected2)){
+									console.log(res.images[0].norm(), expected.norm());
+								}
+								t.true(actual2.equals(expected2), `Failed on "${backend.key}" backend`);
+								
 							});
+						})
+						.then(() => {
+							return res;
+						});
 					})
 					.then(res => {
 						if (!expectImg) {
