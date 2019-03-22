@@ -27,6 +27,7 @@ test('truncated-normal noise', macroGenerator, TruncatedNormalNoise, {
 	      if (Array.isArray(i)) {
 	        return flat.concat(flatten(i));
 	      }
+
 	      return flat.concat(i);
 	    }, []);
 	  };
@@ -53,7 +54,7 @@ test('truncated-normal noise', macroGenerator, TruncatedNormalNoise, {
 });
 
 test('truncated-normal noise with hasard', macroGenerator, TruncatedNormalNoise, {
-	// debugOutput: [
+	// DebugOutput: [
 	// 	path.join(__dirname, '../..', 'tmp/truncated-normal-noise0.png'),
 	// 	path.join(__dirname, '../..', 'tmp/truncated-normal-noise1.png'),
 	// 	path.join(__dirname, '../..', 'tmp/truncated-normal-noise2.png'),

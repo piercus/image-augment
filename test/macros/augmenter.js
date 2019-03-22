@@ -14,22 +14,22 @@ module.exports = function (t, Cstr, {
 	outputPoints,
 	expectImg,
 	backends = [
-		require('opencv4nodejs')
-		,
+		require('opencv4nodejs'),
 		require('@tensorflow/tfjs-node-gpu')
 	]
 }) {
 	return PromiseBlue.map(backends, bKey => {
 		const backend = allBackends.get(bKey);
-		
+
 		const inst = new Cstr(Object.assign({}, options, {backend: bKey}));
 		debug(`${Cstr.name}/${backend.key} initialized`);
-		let inputs
-		if(inputFilename){
+		let inputs;
+		if (inputFilename) {
 			inputs = [path.join(__dirname, '../data', backend.key, inputFilename)];
-		} else { // if(inputFilenames)
+		} else { // If(inputFilenames)
 			inputs = inputFilenames.map(inF => path.join(__dirname, '../data', backend.key, inF));
 		}
+
 		let output;
 		if (outputFilename) {
 			output = path.join(__dirname, '../data', backend.key, outputFilename);
@@ -42,20 +42,20 @@ module.exports = function (t, Cstr, {
 					.then(res => {
 						debug(`${Cstr.name}/${backend.key} end`);
 						let dbgOutput;
-						if(typeof(debugOutput) === 'object'){
+						if (typeof (debugOutput) === 'object') {
 							dbgOutput = debugOutput[backend.key];
 						} else {
-							dbgOutput = debugOutput
+							dbgOutput = debugOutput;
 						}
-						
+
 						if (!dbgOutput) {
 							return Promise.resolve(res);
 						}
 
 						debug(`Save file for debugging in ${dbgOutput}`);
-						
+
 						return backend.writeImages(
-							Array.isArray(dbgOutput) ? dbgOutput : [dbgOutput], 
+							Array.isArray(dbgOutput) ? dbgOutput : [dbgOutput],
 							res.images
 						).then(() => {
 							return res;
@@ -75,20 +75,20 @@ module.exports = function (t, Cstr, {
 						return promise.then(() => {
 							return backend.readImage(output);
 						}).then(expected => {
+							if (!expected) {
+								throw (new Error(`Cannot open ${output}`));
+							}
+
 							return Promise.all([
 								backend.imagesToBuffer([expected]),
 								backend.imagesToBuffer(res.images)
 							]).then(([actual2, expected2]) => {
-								if(!actual2.equals(expected2)){
-									console.log(res.images[0].norm(), expected.norm());
-								}
-								t.true(actual2.equals(expected2), `Failed on "${backend.key}" backend`);
-								
+								t.true(actual2.equals(expected2), `Failed on "${backend.key}" backend while comparing to "${output}"`);
 							});
 						})
-						.then(() => {
-							return res;
-						});
+							.then(() => {
+								return res;
+							});
 					})
 					.then(res => {
 						if (!expectImg) {

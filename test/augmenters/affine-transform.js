@@ -29,11 +29,14 @@ test('affine scale 2 replicate', macroAugmenter, AffineTransform, {
 
 test('affine translatePercent 0.1', macroAugmenter, AffineTransform, {
 	inputFilename: 'lenna.png',
-	outputFilename: 'lenna-affine-translate-10.png',
+	// OutputFilename: 'lenna-affine-translate-10.png',
 	// debugOutput: {
 	// 	opencv4nodejs : [
 	// 		path.join(__dirname, '../..', 'tmp/opencv4nodejs-lenna-affine-translate-10.png')
-	// 	]
+	// 	],
+	// 	tfjs: [
+	// 		path.join(__dirname, '../..', 'tmp/tfjs-lenna-affine-translate-10.png')
+	// 	],
 	// },
 	options: {
 		translatePercent: 0.1,

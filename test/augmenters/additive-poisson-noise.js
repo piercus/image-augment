@@ -15,13 +15,9 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 		t.true(norm > lambda * 2 / 3);
 		t.true(norm < lambda * 4 / 3);
 
-		const norm2 = backend.normL1(backend.diff(mat1, mat2)) / (metadata.width * metadata.height * metadata.channels);
-
-		t.true(norm2 > lambda * 1e-3);
-
 		let count = 0;
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
-		const m2 = backend.imageToArray(mat2);
+		const m2 = backend.imageToArray(mats2);
 		backend.forEachPixel(absdiff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
 			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
@@ -44,7 +40,7 @@ test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 		t.true(norm > lambda * 2 / 3);
 		t.true(norm < lambda * 4 / 3);
 		let count = 0;
-		const m2 = backend.imageToArray(mat2);
+		const m2 = backend.imageToArray(mats2);
 		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
 			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;

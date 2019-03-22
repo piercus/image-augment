@@ -10,22 +10,21 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 	// Backends: ['tfjs'],
 	// backends: ['opencv4nodejs'],
 	expectImg(t, mats1, mats2, backend) {
-		const mat1 = backend.splitImages(mats1)[0];
-		const mat2 = backend.splitImages(mats2)[0];
 		const metadata = backend.getMetadata(mats1);
-		const diff = backend.diff(mat1, mat2);
-		const norm = backend.normL1(diff) / (metadata.width * metadata.height * 3);
+		const diff = backend.diff(mats1, mats2);
+		const size = (metadata.nImages * metadata.width * metadata.height * metadata.channels);
+		const norm = backend.normL1(diff) / size;
 
-		t.true(Math.abs(norm - mean) < 100 / Math.sqrt((metadata.width * metadata.height * 3)));
+		t.true(Math.abs(norm - mean) < 1000 / Math.sqrt(size));
 
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
 
 		let count = 0;
-		const m2 = backend.imageToArray(mat2);
+		const m2 = backend.imageToArray(mats2);
 
 		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
 			// Console.log({rowIndex, colIndex})
-			if (m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
+			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
 			}
 		});
@@ -41,11 +40,9 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 test('additiveGaussianNoise per Channel', macroAugmenter, AdditiveGaussianNoise, {
 	inputFilename: 'lenna.png',
 	expectImg(t, mats1, mats2, backend) {
-		const mat1 = backend.splitImages(mats1)[0];
-		const mat2 = backend.splitImages(mats2)[0];
-		const diff = backend.diff(mat1, mat2);
+		const diff = backend.diff(mats1, mats2);
 		let count = 0;
-		const m2 = backend.imageToArray(mat2);
+		const m2 = backend.imageToArray(mats2);
 		backend.forEachPixel(diff, ([b, g, r], rowIndex, colIndex) => {
 			if (m2[rowIndex][colIndex].indexOf(255) === -1 && m2[rowIndex][colIndex].indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;

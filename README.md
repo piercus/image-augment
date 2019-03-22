@@ -7,6 +7,6 @@ It is made to work with [hasard](https://www.npmjs.com/package/hasard) and [open
 ## Todo list
 
 [] Add benchmark test to measure the speed
-[] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
+[x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
 [] Run augmentation by batches on tensorflowjs
 [x] Get affine and perspective transform to work with tensorflow backend

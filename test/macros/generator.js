@@ -11,7 +11,7 @@ module.exports = function (t, Cstr, {
 	channels,
 	options,
 	backends = [
-		//require('@tensorflow/tfjs-node-gpu'),
+		// Require('@tensorflow/tfjs-node-gpu'),
 		require('opencv4nodejs')
 	]
 }) {

@@ -13,7 +13,7 @@ test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTrun
 	expectImg(t, mats1, mats2, backend) {
 		const metadata = backend.getMetadata(mats1);
 		const diff = backend.diff(mats1, mats2);
-		const size = (metadata.nImages * metadata.width * metadata.height * 3)
+		const size = (metadata.nImages * metadata.width * metadata.height * 3);
 		const norm = backend.normL1(diff) / size;
 		const tolerance = 100 / Math.sqrt(size);
 		t.true(Math.abs(norm - mean) < tolerance);
@@ -24,9 +24,9 @@ test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTrun
 		const m2 = backend.imageToArray(mats2);
 
 		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
-			//console.log(m2[batchIndex] && m2[batchIndex][rowIndex])
-			if (m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
-				count ++;
+			// Console.log(m2[batchIndex] && m2[batchIndex][rowIndex])
+			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
+				count++;
 			}
 		});
 		t.is(count, 0);
@@ -45,8 +45,8 @@ test('additiveTruncatedNormalNoise per Channel', macroAugmenter, AdditiveTruncat
 		let count = 0;
 		const m2 = backend.imageToArray(mats2);
 		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
-			if (m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
-				count ++;
+			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
+				count++;
 			}
 		});
 		t.not(count, 0);

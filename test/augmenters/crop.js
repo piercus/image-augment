@@ -14,6 +14,11 @@ test('crop kernel 10%', macroAugmenter, Crop, {
 test('crop kernel 10%x30%', macroAugmenter, Crop, {
 	inputFilename: 'lenna.png',
 	outputFilename: 'lenna-crop-10x30.png',
+	// DebugOutput: {
+	// 	tfjs: [
+	// 		path.join(__dirname, '..', 'data/tfjs/lenna-crop-10x30.png')
+	// 	]
+	// },
 	options: {
 		percent: [0.1, 0.3]
 	}
