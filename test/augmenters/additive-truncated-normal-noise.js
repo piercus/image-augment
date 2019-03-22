@@ -4,55 +4,49 @@ const AdditiveTruncatedNormalNoise = require('../../lib/augmenters/additive-trun
 const macroAugmenter = require('../macros/augmenter');
 
 const mean = 10;
-const nImages = 2;
+const nImages = 5;
 
-test.only('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTruncatedNormalNoise, {
+test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTruncatedNormalNoise, {
 	inputFilenames: new Array(nImages).fill('lenna.png'),
-	backends:[
-		require('@tensorflow/tfjs-node-gpu')
-	],
 	// Backends: ['tfjs'],
-	// backends: ['opencv4nodejs'],
+	backends: [require('opencv4nodejs')],
 	expectImg(t, mats1, mats2, backend) {
-		const mat1 = backend.splitImages(mats1)[0];
-		const mat2 = backend.splitImages(mats2)[0];
 		const metadata = backend.getMetadata(mats1);
-		const diff = backend.diff(mat1, mat2);
-		const norm = backend.normL1(diff) / (metadata.width * metadata.height * 3);
-		const tolerance = 100 / Math.sqrt((metadata.width * metadata.height * 3));
+		const diff = backend.diff(mats1, mats2);
+		const size = (metadata.nImages * metadata.width * metadata.height * 3)
+		const norm = backend.normL1(diff) / size;
+		const tolerance = 100 / Math.sqrt(size);
 		t.true(Math.abs(norm - mean) < tolerance);
 
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
 
 		let count = 0;
-		const m2 = backend.imageToArray(mat2);
+		const m2 = backend.imageToArray(mats2);
 
-		backend.forEachPixel(diff, ([b, g, r], rowIndex, colIndex) => {
-			// Console.log({rowIndex, colIndex})
-			if (m2[rowIndex][colIndex].indexOf(255) === -1 && m2[rowIndex][colIndex].indexOf(0) === -1 && (r !== g || g !== b)) {
-				count++;
+		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
+			//console.log(m2[batchIndex] && m2[batchIndex][rowIndex])
+			if (m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
+				count ++;
 			}
 		});
 		t.is(count, 0);
 	},
 	options: {
 		mean,
-		std: 2,
+		sigma: 2,
 		perChannel: false
 	}
 });
 
 test('additiveTruncatedNormalNoise per Channel', macroAugmenter, AdditiveTruncatedNormalNoise, {
-	inputFilename: 'lenna.png',
+	inputFilenames: new Array(nImages).fill('lenna.png'),
 	expectImg(t, mats1, mats2, backend) {
-		const mat1 = backend.splitImages(mats1)[0];
-		const mat2 = backend.splitImages(mats2)[0];
-		const diff = backend.diff(mat1, mat2);
+		const diff = backend.diff(mats1, mats2);
 		let count = 0;
-		const m2 = backend.imageToArray(mat2);
-		backend.forEachPixel(diff, ([b, g, r], rowIndex, colIndex) => {
-			if (m2[rowIndex][colIndex].indexOf(255) === -1 && m2[rowIndex][colIndex].indexOf(0) === -1 && (r !== g || g !== b)) {
-				count++;
+		const m2 = backend.imageToArray(mats2);
+		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
+			if (m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
+				count ++;
 			}
 		});
 		t.not(count, 0);

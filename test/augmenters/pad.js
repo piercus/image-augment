@@ -6,7 +6,6 @@ const macroAugmenter = require('../macros/augmenter');
 test('pad 10% with replicate border', macroAugmenter, Pad, {
 	inputFilename: 'lenna.png',
 	outputFilename: 'lenna-pad-10.png',
-	backends: ['opencv4nodejs'],
 	options: {
 		percent: 0.1,
 		borderType: 'replicate',
@@ -17,7 +16,6 @@ test('pad 10% with replicate border', macroAugmenter, Pad, {
 test('pad 10%x30% with constant red border', macroAugmenter, Pad, {
 	inputFilename: 'lenna.png',
 	outputFilename: 'lenna-pad-10x30.png',
-	backends: ['opencv4nodejs'],
 	options: {
 		percent: [0.1, 0.3],
 		borderType: 'constant',

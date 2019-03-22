@@ -23,9 +23,9 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 		let count = 0;
 		const m2 = backend.imageToArray(mat2);
 
-		backend.forEachPixel(diff, ([b, g, r], rowIndex, colIndex) => {
+		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
 			// Console.log({rowIndex, colIndex})
-			if (m2[rowIndex][colIndex].indexOf(255) === -1 && m2[rowIndex][colIndex].indexOf(0) === -1 && (r !== g || g !== b)) {
+			if (m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0,3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
 			}
 		});
@@ -33,7 +33,7 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 	},
 	options: {
 		mean,
-		std: 2,
+		sigma: 2,
 		perChannel: false
 	}
 });

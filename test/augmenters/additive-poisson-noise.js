@@ -8,9 +8,7 @@ const lambda = 4;
 test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise, {
 	inputFilename: 'lenna.png',
 	expectImg(t, mats1, mats2, backend) {
-		const mat1 = backend.splitImages(mats1)[0];
-		const mat2 = backend.splitImages(mats2)[0];
-		const absdiff = backend.absdiff(mat1, mat2);
+		const absdiff = backend.absdiff(mats1, mats2);
 		const metadata = backend.getMetadata(mats1);
 		const norm = backend.normL1(absdiff) / (metadata.width * metadata.height * metadata.channels);
 
@@ -24,8 +22,8 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 		let count = 0;
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
 		const m2 = backend.imageToArray(mat2);
-		backend.forEachPixel(absdiff, ([b, g, r], rowIndex, colIndex) => {
-			if (m2[rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
+		backend.forEachPixel(absdiff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
+			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
 			}
 		});
@@ -40,17 +38,15 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 	inputFilename: 'lenna.png',
 	expectImg(t, mats1, mats2, backend) {
-		const mat1 = backend.splitImages(mats1)[0];
-		const mat2 = backend.splitImages(mats2)[0];
-		const diff = backend.absdiff(mat1, mat2);
+		const diff = backend.absdiff(mats1, mats2);
 		const metadata = backend.getMetadata(mats1);
 		const norm = backend.normL1(diff) / (metadata.width * metadata.height * metadata.channels);
 		t.true(norm > lambda * 2 / 3);
 		t.true(norm < lambda * 4 / 3);
 		let count = 0;
 		const m2 = backend.imageToArray(mat2);
-		backend.forEachPixel(diff, ([b, g, r], rowIndex, colIndex) => {
-			if (m2[rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
+		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
+			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
 				count++;
 			}
 		});

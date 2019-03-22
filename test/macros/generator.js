@@ -11,7 +11,7 @@ module.exports = function (t, Cstr, {
 	channels,
 	options,
 	backends = [
-		require('@tensorflow/tfjs-node-gpu'),
+		//require('@tensorflow/tfjs-node-gpu'),
 		require('opencv4nodejs')
 	]
 }) {
@@ -29,7 +29,7 @@ module.exports = function (t, Cstr, {
 					return Promise.resolve();
 				}
 
-				backend.writeImages(debugOutput, res.images);
+				return backend.writeImages(debugOutput, res.images);
 			})
 			.then(() => {
 				if (!expectImg) {
