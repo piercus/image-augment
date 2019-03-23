@@ -1,12 +1,16 @@
 # image-augment
 
+WORK IN PROGRESS ...
+
 Augment images (geometric, noise, ...) for visual machine learning data augmentation.
 
 This library has been freely inspired from [imgaug](https://github.com/aleju/imgaug)
 
-It is made to work with [hasard](https://www.npmjs.com/package/hasard) and with 2 different backends :
-* [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs)
-* [tensorflowjs](https://github.com/tensorflow/tfjs)
+It is made to work 
+* with [hasard](https://www.npmjs.com/package/hasard) for randomness fine customization
+* with 2 different backends :
+  * [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs)
+  * [tensorflowjs](https://github.com/tensorflow/tfjs)
 
 ## Installation
 
