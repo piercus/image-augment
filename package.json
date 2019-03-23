@@ -44,6 +44,11 @@
   ],
   "author": "Pierre Colle <piercus@gmail.com>",
   "license": "MIT",
+  "xo":{
+    "rules":{
+      "no-new": 1
+    }
+  },
   "bugs": {
     "url": "https://github.com/piercus/image-augment/issues"
   },
