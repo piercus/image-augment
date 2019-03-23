@@ -22,7 +22,7 @@ npm install image-augment
 ```javascript
 // First you need a backend for image processing
 // this can be one of the following : 
-// * @tensorflow/tfjs, 
+// * @tensorflow/tfjs 
 // * @tensorflow/tfjs-node
 // * @tensorflow/tfjs-node-gpu
 // * opencv4nodejs
