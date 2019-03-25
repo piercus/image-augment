@@ -11,7 +11,9 @@ const backendLibs = [
 const allBackends = require('../../lib/backend');
 const imageAugment = require('../..');
 
-const filenames = new Array(2).fill(path.join(__dirname, '../data', 'opencv4nodejs', 'lenna.png'));
+const batchSize = 100;
+
+const filenames = new Array(batchSize).fill(path.join(__dirname, '../data', 'opencv4nodejs', 'lenna.png'));
 
 PromiseBlue.map(backendLibs, backendLib => {
 	const startTime = new Date();
@@ -28,9 +30,9 @@ PromiseBlue.map(backendLibs, backendLib => {
 			ia.additiveNoise(h.number(0, 2)),
 			ia.affineTransform({scale: h.number(1, 1.2)}),
 			ia.blur(h.integer(1, 6)),
-			ia.crop(h.integer(10, 20)),
-			ia.pad(h.integer(10, 20)),
-			ia.resize(h.integer(150, 300))
+			ia.crop(10),
+			//ia.pad(10),
+			ia.resize(200)
 		]
 	});
 

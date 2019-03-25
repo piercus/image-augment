@@ -17,7 +17,7 @@ It is made to work
 ```
 npm install image-augment
 ```
-## Simple example with tensorflowjs
+## Simple example
 
 ```javascript
 // First you need a backend for image processing
@@ -43,15 +43,7 @@ const basicAugmentation = ia.sequential([
 	ia.blur(3)
 ]);
 
-// 2x2 image in tfjs tensor4d format
-const inputImages = tf.tensor4d([
-	0,22,3,255,
-	20,12,3,255,
-	30,22,3,255,
-	40,32,3,255
-], [1,2,2,4])
-
-const {images} = basicAugmentation.run({images : inputImages})
+const {images} = basicAugmentation.read({images : inputImages})
 ```
 
 ## Real-life example
@@ -136,12 +128,13 @@ const {images} = basicAugmentation.run({images : [img]})
 
 ## Todo list
 
-[] Add benchmark test to measure the speed
+[ ] Add benchmark test to measure the speed
 [x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
-[x] Get affine and perspective transform to work with tensorflow backend
-[] Add unit test and examples for cropToBox and Draw boxes
-[] Generate documentation on github
-[] add examples/explanations/benchmark in the README.md
-[] create a demo app running in the browser with tfjs + webgl
-[] Implement perspective Transform using tensorflowjs backend
-[] Run all unit tests on Travis
+[x] Get affine transform to work with tensorflow backend
+[ ] Add unit test and examples for cropToBox and Draw boxes
+[ ] Generate documentation on github
+[ ] Stream API
+[ ] add examples/explanations/benchmark in the README.md
+[ ] create a demo app running in the browser with tfjs + webgl
+[ ] Implement perspective Transform using tensorflowjs backend
+[ ] Run all unit tests on Travis
