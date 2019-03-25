@@ -10,14 +10,14 @@ module.exports = function (t, Cstr, {
 	height,
 	channels,
 	options,
-	backends = [
-		// Require('@tensorflow/tfjs-node-gpu'),
+	backendLibs = [
+		require('@tensorflow/tfjs-node-gpu'),
 		require('opencv4nodejs')
 	]
 }) {
-	return PromiseBlue.map(backends, bKey => {
-		const backend = allBackends.get(bKey);
-		const inst = new Cstr(Object.assign({}, options, {backend: bKey}));
+	return PromiseBlue.map(backendLibs, backendLib => {
+		const backend = allBackends.get(backendLib);
+		const inst = new Cstr(Object.assign({}, options, {backendLib: backendLib}));
 		const hasardInst = inst.build({nImages, width, height, channels});
 		debug(`${Cstr.name}/${backend.key} start`);
 		const res = hasardInst.runOnce();

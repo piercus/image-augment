@@ -8,8 +8,7 @@ const nImages = 5;
 
 test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTruncatedNormalNoise, {
 	inputFilenames: new Array(nImages).fill('lenna.png'),
-	// Backends: ['tfjs'],
-	backends: [require('opencv4nodejs')],
+	// backendLibs: [require('opencv4nodejs')],
 	expectImg(t, mats1, mats2, backend) {
 		const metadata = backend.getMetadata(mats1);
 		const diff = backend.diff(mats1, mats2);

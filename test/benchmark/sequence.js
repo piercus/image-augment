@@ -3,7 +3,7 @@ const debug = require('debug')('image-augment:benchmark');
 const h = require('hasard');
 const PromiseBlue = require('bluebird');
 
-const backends = [
+const backendLibs = [
 	require('@tensorflow/tfjs-node'),
 	require('opencv4nodejs'),
 	require('@tensorflow/tfjs-node-gpu')
@@ -13,28 +13,28 @@ const imageAugment = require('../..');
 
 const filenames = new Array(2).fill(path.join(__dirname, '../data', 'opencv4nodejs', 'lenna.png'));
 
-PromiseBlue.map(backends, b => {
+PromiseBlue.map(backendLibs, backendLib => {
 	const startTime = new Date();
 	const backend = allBackends.get(b);
-	const augmenter = new imageAugment.Sequential({
-		backend: b,
+	const ia = imageAugment(b);
+	const augmenter = new ia.Sequential({
 		steps: [
-			new imageAugment.AddWeighted({
+			new ia.AddWeighted({
 				value: h.array({size: 3, value: h.integer(0, 255)}),
 				alpha: h.number(0, 0.5)
 			}),
-			new imageAugment.Add({
+			new ia.Add({
 				value: h.array({size: 3, value: h.integer(0, 10)})
 			}),
-			new imageAugment.AdditivePoissonNoise(h.integer(0, 3)),
-			new imageAugment.AdditiveGaussianNoise(h.number(0, 2)),
-			new imageAugment.AffineTransform({scale: h.number(1, 1.2)}),
-			new imageAugment.Background({scale: h.number(1, 1.2)}),
-			new imageAugment.Blur(h.integer(1, 6)),
-			new imageAugment.Crop(h.integer(10, 20)),
-			new imageAugment.Pad(h.integer(10, 20)),
-			new imageAugment.PerspectiveTransform(0.2),
-			new imageAugment.Resize(h.integer(150, 300))
+			new ia.AdditivePoissonNoise(h.integer(0, 3)),
+			new ia.AdditiveGaussianNoise(h.number(0, 2)),
+			new ia.AffineTransform({scale: h.number(1, 1.2)}),
+			new ia.Background({scale: h.number(1, 1.2)}),
+			new ia.Blur(h.integer(1, 6)),
+			new ia.Crop(h.integer(10, 20)),
+			new ia.Pad(h.integer(10, 20)),
+			new ia.PerspectiveTransform(0.2),
+			new ia.Resize(h.integer(150, 300))
 		]
 	});
 

@@ -7,8 +7,6 @@ const mean = 2;
 
 test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoise, {
 	inputFilename: 'lenna.png',
-	// Backends: ['tfjs'],
-	// backends: ['opencv4nodejs'],
 	expectImg(t, mats1, mats2, backend) {
 		const metadata = backend.getMetadata(mats1);
 		const diff = backend.diff(mats1, mats2);

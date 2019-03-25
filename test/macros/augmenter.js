@@ -13,15 +13,15 @@ module.exports = function (t, Cstr, {
 	inputPoints,
 	outputPoints,
 	expectImg,
-	backends = [
+	backendLibs = [
 		require('opencv4nodejs'),
 		require('@tensorflow/tfjs-node-gpu')
 	]
 }) {
-	return PromiseBlue.map(backends, bKey => {
-		const backend = allBackends.get(bKey);
+	return PromiseBlue.map(backendLibs, backendLib => {
+		const backend = allBackends.get(backendLib);
 
-		const inst = new Cstr(Object.assign({}, options, {backend: bKey}));
+		const inst = new Cstr(Object.assign({}, options, {backendLib: backendLib}));
 		debug(`${Cstr.name}/${backend.key} initialized`);
 		let inputs;
 		if (inputFilename) {
