@@ -41,3 +41,8 @@ test('pad transparent image to transparent border', macroAugmenter, Pad, {
 		borderValue: [255, 0, 0]
 	}
 });
+
+test('pad on 3 images', macroAugmenter, Pad, {
+	inputFilenames: ['lenna.png', 'lenna.png', 'lenna.png'],
+	options: 10
+});
