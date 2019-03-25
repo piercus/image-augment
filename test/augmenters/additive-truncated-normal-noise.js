@@ -3,18 +3,18 @@ const test = require('ava');
 const AdditiveTruncatedNormalNoise = require('../../lib/augmenters/additive-truncated-normal-noise');
 const macroAugmenter = require('../macros/augmenter');
 
-const mean = 10;
+const mean = 2;
 const nImages = 5;
 
 test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTruncatedNormalNoise, {
 	inputFilenames: new Array(nImages).fill('lenna.png'),
-	// backendLibs: [require('opencv4nodejs')],
+	// BackendLibs: [require('opencv4nodejs')],
 	expectImg(t, mats1, mats2, backend) {
 		const metadata = backend.getMetadata(mats1);
 		const diff = backend.diff(mats1, mats2);
 		const size = (metadata.nImages * metadata.width * metadata.height * 3);
 		const norm = backend.normL1(diff) / size;
-		const tolerance = 100 / Math.sqrt(size);
+		const tolerance = 1000 / Math.sqrt(size);
 		t.true(Math.abs(norm - mean) < tolerance);
 
 		// Console.log(diff.getDataAsArray().slice(0,30).map(v => v.slice(440, 450)))
@@ -28,6 +28,8 @@ test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTrun
 				count++;
 			}
 		});
+		backend.dispose(diff);
+		backend.dispose(norm);
 		t.is(count, 0);
 	},
 	options: {
@@ -48,6 +50,7 @@ test('additiveTruncatedNormalNoise per Channel', macroAugmenter, AdditiveTruncat
 				count++;
 			}
 		});
+		backend.dispose(diff)
 		t.not(count, 0);
 	},
 	options: {

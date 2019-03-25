@@ -17,7 +17,7 @@ module.exports = function (t, Cstr, {
 }) {
 	return PromiseBlue.map(backendLibs, backendLib => {
 		const backend = allBackends.get(backendLib);
-		const inst = new Cstr(Object.assign({}, options, {backendLib: backendLib}));
+		const inst = new Cstr(Object.assign({}, options, {backendLib}));
 		const hasardInst = inst.build({nImages, width, height, channels});
 		debug(`${Cstr.name}/${backend.key} start`);
 		const res = hasardInst.runOnce();

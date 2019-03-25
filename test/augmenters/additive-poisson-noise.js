@@ -23,6 +23,8 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 				count++;
 			}
 		});
+		backend.dispose(absdiff)
+		backend.dispose(norm)
 		t.is(count, 0);
 	},
 	options: {
@@ -46,6 +48,8 @@ test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 				count++;
 			}
 		});
+		backend.dispose(diff)
+		backend.dispose(norm)
 		t.not(count, 0);
 	},
 	options: {

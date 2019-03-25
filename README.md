@@ -34,13 +34,13 @@ const tf = require('@tensorflow/tfjs-node');
 const ia = require('image-augment')(tf);
 
 // create an augmentation pipeline
-const basicAugmentation = new ia.Sequential([
+const basicAugmentation = ia.sequential([
 	// add a noise with a standard deviation of 15
-	new ia.AdditiveNoise(15),
+	ia.additiveNoise(15),
 	// rotate 30°
-	new ia.AffineTransform({ rotate: 30 }),
+	ia.affineTransform({ rotate: 30 }),
 	// add a blur kernel of 3 pixel
-	new ia.Blur(3)
+	ia.blur(3)
 ]);
 
 // 2x2 image in tfjs tensor4d format
@@ -77,11 +77,11 @@ const ia = require('image-augment')(tf);
 const h = require('hasard');
 
 // create an augmentation pipeline
-const basicAugmentation = new ia.Sequential([
+const basicAugmentation = ia.sequential([
 	// add a noise
-	new ia.AdditiveNoise(15),
+	ia.additiveNoise(15),
 	// add a random affine transform
-	new ia.AffineTransform({
+	ia.affineTransform({
 		// shear from -15 to 15°
 		shear: h.number(-15, 15), 
 		// rotate from -30 to 30°
@@ -90,7 +90,7 @@ const basicAugmentation = new ia.Sequential([
 		translatePercent: h.array({size: 2, value: h.number(-0.1, 0.1)}),
 	}),
 	// add a blur kernel between 0 and 5
-	new ia.Blur(h.integer(0, 5))
+	ia.blur(h.integer(0, 5))
 ]);
 
 // load images in tensorflow using Jimp and fs 
@@ -120,13 +120,13 @@ const cv = require('opencv4nodejs');
 const ia = require('image-augment')(cv);
 
 // create an augmentation pipeline
-const basicAugmentation = new ia.Sequential([
+const basicAugmentation = ia.sequential([
 	// add a noise with a standard deviation of 15
-	new ia.AdditiveNoise(15),
+	ia.additiveNoise(15),
 	// rotate 30°
-	new ia.AffineTransform({ rotate: 30 }),
+	ia.affineTransform({ rotate: 30 }),
 	// add a blur kernel of 3 pixel
-	new ia.Blur(3)
+	ia.blur(3)
 ]);
 
 const img = cv.imread('lenna.png');
@@ -139,10 +139,9 @@ const {images} = basicAugmentation.run({images : [img]})
 [] Add benchmark test to measure the speed
 [x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
 [x] Get affine and perspective transform to work with tensorflow backend
-[] Add unit test and examples for cropToBox
+[] Add unit test and examples for cropToBox and Draw boxes
 [] Generate documentation on github
 [] add examples/explanations/benchmark in the README.md
 [] create a demo app running in the browser with tfjs + webgl
 [] Implement perspective Transform using tensorflowjs backend
-[] Draw boxes for tensorflowjs
 [] Run all unit tests on Travis
