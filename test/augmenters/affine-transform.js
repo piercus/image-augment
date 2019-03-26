@@ -97,12 +97,3 @@ test('affine transparent image to transparent border', macroAugmenter, AffineTra
 		borderValue: [255, 0, 0]
 	}
 });
-
-test('affine transparent image to transparent border', macroAugmenter, AffineTransform, {
-	inputFilename: 'lenna-with-alpha.png',
-	options: {
-		rotate: 10,
-		borderType: 'transparent',
-		borderValue: [255, 0, 0]
-	}
-});

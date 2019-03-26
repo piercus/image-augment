@@ -1,9 +1,11 @@
 const test = require('ava');
+const h = require('hasard');
 const Sequential = require('../../lib/augmenters/sequential');
 const Blur = require('../../lib/augmenters/blur');
 const Resize = require('../../lib/augmenters/resize');
 const AdditiveTruncatedNormalNoise = require('../../lib/augmenters/additive-truncated-normal-noise');
 const AffineTransform = require('../../lib/augmenters/affine-transform');
+const Crop = require('../../lib/augmenters/crop');
 
 const macroAugmenter = require('../macros/augmenter');
 
@@ -30,11 +32,11 @@ test('sequential noise then affine', macroAugmenter, Sequential, {
 		]
 	}
 });
-
-test('sequential noise then affine', macroAugmenter, Sequential, {
-	inputFilename: 'lenna.png',
+test('sequential crop then noise then affine', macroAugmenter, Sequential, {
+	inputFilenames: ['lenna.png', 'lenna.png', 'lenna.png'],
 	options: {
 		steps: [
+			new Crop(h.integer(0, 20)),
 			new AdditiveTruncatedNormalNoise(2),
 			new AffineTransform(1)
 		]

@@ -52,7 +52,7 @@ module.exports = function (t, Cstr, {
 				return inst.read({images})
 					.then(res => {
 						if (backend.key === 'tfjs') {
-							t.true(backend.backendLib.memory().numTensors <= startNumTensors + 2);
+							t.true(backend.backendLib.memory().numTensors <= startNumTensors + 1 + (Array.isArray(res.images) ? res.images.length : 1));
 						}
 
 						debug(`${Cstr.name}/${backend.key} end (${backend._tf && backend._tf.memory().numTensors})`);
@@ -127,10 +127,10 @@ module.exports = function (t, Cstr, {
 							return Promise.resolve(res);
 						}
 
-						const {width, height} = backend.getMetadata(images);
+						const {width, height} = backend.getMetadata(images)[0];
 						const toSize = ([x, y]) => ([x * width, y * height]);
 
-						return inst.runAugmenter({images, points: [inputPoints.map(toSize)]}).then(res => {
+						return inst.read({images, points: [inputPoints.map(toSize)]}).then(res => {
 							const expected = outputPoints.map(toSize);
 							const tolerance = 1e-6 * (width + height) / 2;
 							res.points[0].forEach((p, index) => {

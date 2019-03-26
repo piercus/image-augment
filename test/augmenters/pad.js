@@ -1,4 +1,5 @@
 const test = require('ava');
+const h = require('hasard')
 const Pad = require('../../lib/augmenters/pad');
 const macroAugmenter = require('../macros/augmenter');
 
@@ -44,4 +45,10 @@ test('pad transparent image to transparent border', macroAugmenter, Pad, {
 test('pad on 3 images', macroAugmenter, Pad, {
 	inputFilenames: ['lenna.png', 'lenna.png', 'lenna.png'],
 	options: 10
+});
+test('pad on 3 images with hasard', macroAugmenter, Pad, {
+	inputFilenames: ['lenna.png', 'lenna.png', 'lenna.png'],
+	options: {
+		size: h.number(0,10)
+	}
 });

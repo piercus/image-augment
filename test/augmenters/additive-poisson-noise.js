@@ -8,7 +8,7 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 	inputFilename: 'lenna.png',
 	expectImg(t, mats1, mats2, backend) {
 		const absdiff = backend.absdiff(mats1, mats2);
-		const metadata = backend.getMetadata(mats1);
+		const metadata = backend.getMetadata(mats1)[0];
 		const norm = backend.normL1(absdiff) / (metadata.width * metadata.height * metadata.channels);
 
 		t.true(norm > lambda * 2 / 3);
@@ -36,7 +36,7 @@ test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 	inputFilename: 'lenna.png',
 	expectImg(t, mats1, mats2, backend) {
 		const diff = backend.absdiff(mats1, mats2);
-		const metadata = backend.getMetadata(mats1);
+		const metadata = backend.getMetadata(mats1)[0];
 		const norm = backend.normL1(diff) / (metadata.width * metadata.height * metadata.channels);
 		t.true(norm > lambda * 2 / 3);
 		t.true(norm < lambda * 4 / 3);
