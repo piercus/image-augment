@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const AdditiveTruncatedNormalNoise = require('../../lib/augmenters/additive-truncated-normal-noise');
 const macroAugmenter = require('../macros/augmenter');
@@ -50,7 +49,7 @@ test('additiveTruncatedNormalNoise per Channel', macroAugmenter, AdditiveTruncat
 				count++;
 			}
 		});
-		backend.dispose(diff)
+		backend.dispose(diff);
 		t.not(count, 0);
 	},
 	options: {

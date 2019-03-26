@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const AffineTransform = require('../../lib/augmenters/affine-transform');
 const macroAugmenter = require('../macros/augmenter');
@@ -87,6 +86,15 @@ test('affine all', macroAugmenter, AffineTransform, {
 		shear: -25,
 		borderValue: [255, 0, 0],
 		borderType: 'constant'
+	}
+});
+
+test('affine transparent image to transparent border', macroAugmenter, AffineTransform, {
+	inputFilename: 'lenna-with-alpha.png',
+	options: {
+		rotate: 10,
+		borderType: 'transparent',
+		borderValue: [255, 0, 0]
 	}
 });
 

@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const h = require('hasard');
 const TruncatedNormalNoise = require('../../lib/generators/truncated-normal-noise');
@@ -23,14 +22,14 @@ test('truncated-normal noise', macroGenerator, TruncatedNormalNoise, {
 		t.is(height, hght);
 		t.is(nImages, imageNumber);
 		const flatten = a => {
-	    return a.reduce((flat, i) => {
-	      if (Array.isArray(i)) {
-	        return flat.concat(flatten(i));
-	      }
+			return a.reduce((flat, i) => {
+				if (Array.isArray(i)) {
+					return flat.concat(flatten(i));
+				}
 
-	      return flat.concat(i);
-	    }, []);
-	  };
+				return flat.concat(i);
+			}, []);
+		};
 
 		const flat = flatten(backend.imageToArray(images));
 
@@ -39,7 +38,7 @@ test('truncated-normal noise', macroGenerator, TruncatedNormalNoise, {
 		const average = (sum / l2);
 		const tolerance = 1000 / Math.sqrt(width * height * channels * nImages);
 		t.true(
-		 	Math.abs(average - mean) < tolerance
+			Math.abs(average - mean) < tolerance
 		);
 	},
 	width: wdth,

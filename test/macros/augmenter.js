@@ -1,6 +1,5 @@
-const debug = require('debug')('image-augment:test:augmenter');
-
 const path = require('path');
+const debug = require('debug')('image-augment:test:augmenter');
 const PromiseBlue = require('bluebird');
 const allBackends = require('../../lib/backend');
 
@@ -14,7 +13,7 @@ module.exports = function (t, Cstr, {
 	outputPoints,
 	expectImg,
 	backendLibs = [
-		//require('opencv4nodejs'),
+		// Require('opencv4nodejs'),
 		require('@tensorflow/tfjs-node-gpu')
 	]
 }) {
@@ -41,18 +40,17 @@ module.exports = function (t, Cstr, {
 			output = path.join(__dirname, '../data', backend.key, outputFilename);
 		}
 
-		// if (backend.key === 'tfjs') {
+		// If (backend.key === 'tfjs') {
 		// 	console.log(backend.backendLib.memory().numTensors, startNumTensors);
 		// }
 
 		return backend.readImages(inputs)
 			.then(images => {
-				// console.log(backend.backendLib.memory().numTensors, startNumTensors);
+				// Console.log(backend.backendLib.memory().numTensors, startNumTensors);
 
 				debug(`${Cstr.name}/${backend.key} start `);
 				return inst.runAugmenter({images})
 					.then(res => {
-
 						if (backend.key === 'tfjs') {
 							t.true(backend.backendLib.memory().numTensors <= startNumTensors + 2);
 						}
@@ -68,20 +66,20 @@ module.exports = function (t, Cstr, {
 						if (!dbgOutput) {
 							return Promise.resolve(res);
 						}
-							// console.log(backend.backendLib.memory().numTensors)
+						// Console.log(backend.backendLib.memory().numTensors)
 
 						debug(`Save file for debugging in ${dbgOutput} (${backend._tf && backend._tf.memory().numTensors})`);
 
 						return backend.writeImages(
 							Array.isArray(dbgOutput) ? dbgOutput : [dbgOutput],
 							res.images
-						).then(() => {							
+						).then(() => {
 							return res;
 						});
 					})
 					.then(res => {
-							// console.log(backend.backendLib.memory().numTensors)
-						
+						// Console.log(backend.backendLib.memory().numTensors)
+
 						if (!output) {
 							t.pass();
 							return Promise.resolve(res);
@@ -106,20 +104,21 @@ module.exports = function (t, Cstr, {
 								t.true(actual2.equals(expected2), `Failed on "${backend.key}" backend while comparing to "${output}"`);
 							}).then(() => {
 								backend.dispose(expected);
-								debug(`${Cstr.name}/${backend.key} After debug images (${backend._tf && backend._tf.memory().numTensors})`)
+								debug(`${Cstr.name}/${backend.key} After debug images (${backend._tf && backend._tf.memory().numTensors})`);
 
 								return res;
 							});
 						});
 					})
-					.then(res => {						
+					.then(res => {
 						if (!expectImg) {
 							t.pass();
 							return Promise.resolve(res);
 						}
-						debug(`${Cstr.name}/${backend.key} bf expectImg (${backend._tf && backend._tf.memory().numTensors})`);						
+
+						debug(`${Cstr.name}/${backend.key} bf expectImg (${backend._tf && backend._tf.memory().numTensors})`);
 						expectImg(t, images, res.images, backend);
-						debug(`${Cstr.name}/${backend.key} af expectImg (${backend._tf && backend._tf.memory().numTensors})`);						
+						debug(`${Cstr.name}/${backend.key} af expectImg (${backend._tf && backend._tf.memory().numTensors})`);
 						return Promise.resolve(res);
 					})
 					.then(res => {
@@ -127,6 +126,7 @@ module.exports = function (t, Cstr, {
 							t.pass();
 							return Promise.resolve(res);
 						}
+
 						const {width, height} = backend.getMetadata(images);
 						const toSize = ([x, y]) => ([x * width, y * height]);
 
@@ -137,16 +137,16 @@ module.exports = function (t, Cstr, {
 								t.true(Math.abs(p[0] - expected[index][0]) < tolerance);
 								t.true(Math.abs(p[1] - expected[index][1]) < tolerance);
 							});
-							backend.dispose(res.images)
+							backend.dispose(res.images);
 						}).then(() => {
 							return res;
 						});
 					}).then(res => {
-						debug(`Before disposed (${backend._tf && backend._tf.memory().numTensors})`)
+						debug(`Before disposed (${backend._tf && backend._tf.memory().numTensors})`);
 						backend.dispose(res.images);
 						backend.dispose(images);
 						if (backend.key === 'tfjs') {
-							debug(`Are tensors disposed ? (${backend._tf.memory().numTensors})`)
+							debug(`Are tensors disposed ? (${backend._tf.memory().numTensors})`);
 							t.true(backend.backendLib.memory().numTensors <= startNumTensors);
 						}
 					});

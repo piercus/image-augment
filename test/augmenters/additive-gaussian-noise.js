@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const AdditiveGaussianNoise = require('../../lib/augmenters/additive-gaussian-noise');
 const macroAugmenter = require('../macros/augmenter');
@@ -26,8 +25,8 @@ test('additiveGaussianNoise not perChannel', macroAugmenter, AdditiveGaussianNoi
 				count++;
 			}
 		});
-		backend.dispose(diff)
-		backend.dispose(norm)
+		backend.dispose(diff);
+		backend.dispose(norm);
 		t.is(count, 0);
 	},
 	options: {
@@ -48,7 +47,7 @@ test('additiveGaussianNoise per Channel', macroAugmenter, AdditiveGaussianNoise,
 				count++;
 			}
 		});
-		backend.dispose(diff)
+		backend.dispose(diff);
 		t.not(count, 0);
 	},
 	options: {

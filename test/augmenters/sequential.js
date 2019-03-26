@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const Sequential = require('../../lib/augmenters/sequential');
 const Blur = require('../../lib/augmenters/blur');
@@ -22,6 +21,16 @@ test('sequential blur then resize', macroAugmenter, Sequential, {
 		]
 	}
 });
+test('sequential noise then affine', macroAugmenter, Sequential, {
+	inputFilename: 'lenna.png',
+	options: {
+		steps: [
+			new AdditiveTruncatedNormalNoise(2),
+			new AffineTransform(1)
+		]
+	}
+});
+
 test('sequential noise then affine', macroAugmenter, Sequential, {
 	inputFilename: 'lenna.png',
 	options: {

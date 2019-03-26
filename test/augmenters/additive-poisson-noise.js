@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const AdditivePoissonNoise = require('../../lib/augmenters/additive-poisson-noise');
 const macroAugmenter = require('../macros/augmenter');
@@ -23,8 +22,8 @@ test('additivePoissonNoise not perChannel', macroAugmenter, AdditivePoissonNoise
 				count++;
 			}
 		});
-		backend.dispose(absdiff)
-		backend.dispose(norm)
+		backend.dispose(absdiff);
+		backend.dispose(norm);
 		t.is(count, 0);
 	},
 	options: {
@@ -48,8 +47,8 @@ test('additivePoissonNoiseperChannel', macroAugmenter, AdditivePoissonNoise, {
 				count++;
 			}
 		});
-		backend.dispose(diff)
-		backend.dispose(norm)
+		backend.dispose(diff);
+		backend.dispose(norm);
 		t.not(count, 0);
 	},
 	options: {

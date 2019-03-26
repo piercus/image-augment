@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const PerspectiveTransform = require('../../lib/augmenters/perspective-transform');
 const macroAugmenter = require('../macros/augmenter');

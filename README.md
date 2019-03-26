@@ -126,12 +126,53 @@ const img = cv.imread('lenna.png');
 const {images} = basicAugmentation.run({images : [img]})
 ```
 
+## Random Sequence example
+
+```
+const ia = require('image-augment');
+const h = require('hasard');
+
+// random example images
+const sometimes = ((aug) => ia.sometimes({p : 0.5, augmenter: aug}))
+
+const seq = new ia.Sequential({
+	steps : [
+		ia.fliplr(0.5),
+		ia.flipud(0.5),
+		sometimes(ia.pad(
+				percent: h.array({size: 2, value: h.number(0, 0.1)}),
+				borderType: ia.RD_BORDER_TYPE,
+				borderValue: h.integer(0, 255)
+		)),
+		sometimes(ia.crop(h.array({size: 2, value: h.number(-0.05, 0)}))),
+		sometimes(new ia.affine({
+				// scale images to 80-120% of their size, individually per axis
+				scale: h.array([h.number(0.6, 1.2), h.number(0.6, 1.2)]),
+				// translate by -20 to +20 percent (per axis)
+				translatePercent: h.array([h.number(-0.2, 0.2),h.number(-0.2, 0.2)]), 
+				// rotate by -45 to +45 degrees
+				rotate: h.number(-45, 45), 
+				// shear by -16 to +16 degrees
+				shear: h.number(-16, 16), 
+				// if borderType is constant, use a random rgba value between 0 and 255
+				borderValue: h.array({value: h.integer(0, 255), size: 4}), 
+				borderType: ia.RD_BORDER_TYPE
+		))
+	],
+	randomOrder : true
+})
+
+const {images} = seq.read(inputImages)
+```
+
+
 ## Todo list
 
 [ ] Add benchmark test to measure the speed
 [x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
 [x] Get affine transform to work with tensorflow backend
-[ ] Add unit test and examples for cropToBox and Draw boxes
+[ ] Faster noise generator
+[ ] Add unit test and examples for cropToBox and DrawBoxes
 [ ] Generate documentation on github
 [ ] Stream API
 [ ] add examples/explanations/benchmark in the README.md

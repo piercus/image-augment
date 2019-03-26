@@ -1,4 +1,3 @@
-const path = require('path');
 const test = require('ava');
 const Resize = require('../../lib/augmenters/resize');
 const macroAugmenter = require('../macros/augmenter');
