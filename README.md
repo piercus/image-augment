@@ -126,45 +126,106 @@ const img = cv.imread('lenna.png');
 const {images} = basicAugmentation.run({images : [img]})
 ```
 
-## Random Sequence example
+## Sequence example with opencv4nodejs
 
-```
-const ia = require('image-augment');
+```javascript
 const h = require('hasard');
+const cv = require('opencv4nodejs');
+const ia = require('image-augment')(cv);
 
-// random example images
-const sometimes = ((aug) => ia.sometimes({p : 0.5, augmenter: aug}))
+// Random example images
+const sometimes = (aug => h.value([aug, ia.identity()]));
 
-const seq = new ia.Sequential({
-	steps : [
+const seq = ia.sequential({
+	steps: [
 		ia.fliplr(0.5),
 		ia.flipud(0.5),
-		sometimes(ia.pad(
-				percent: h.array({size: 2, value: h.number(0, 0.1)}),
-				borderType: ia.RD_BORDER_TYPE,
-				borderValue: h.integer(0, 255)
-		)),
-		sometimes(ia.crop(h.array({size: 2, value: h.number(-0.05, 0)}))),
-		sometimes(new ia.affine({
-				// scale images to 80-120% of their size, individually per axis
-				scale: h.array([h.number(0.6, 1.2), h.number(0.6, 1.2)]),
-				// translate by -20 to +20 percent (per axis)
-				translatePercent: h.array([h.number(-0.2, 0.2),h.number(-0.2, 0.2)]), 
-				// rotate by -45 to +45 degrees
-				rotate: h.number(-45, 45), 
-				// shear by -16 to +16 degrees
-				shear: h.number(-16, 16), 
-				// if borderType is constant, use a random rgba value between 0 and 255
-				borderValue: h.array({value: h.integer(0, 255), size: 4}), 
-				borderType: ia.RD_BORDER_TYPE
-		))
+		ia.pad({
+			percent: h.array({size: 2, value: h.number(0, 0.1)}),
+			borderType: ia.RD_BORDER_TYPE,
+			borderValue: h.integer(0, 255)
+		}),
+		sometimes(ia.crop({
+			percent: h.array({size: 2, value: h.number(0, 0.1)})
+		})),
+		sometimes(ia.affine({
+			// Scale images to 80-120% of their size, individually per axis
+			scale: h.array([h.number(0.6, 1.2), h.number(0.6, 1.2)]),
+			// Translate by -20 to +20 percent (per axis)
+			translatePercent: h.array([h.number(-0.2, 0.2), h.number(-0.2, 0.2)]),
+			// Rotate by -45 to +45 degrees
+			rotate: h.number(-45, 45),
+			// Shear by -16 to +16 degrees
+			shear: h.number(-16, 16),
+			// If borderType is constant, use a random rgba value between 0 and 255
+			borderValue: h.array({value: h.integer(0, 255), size: 4}),
+			borderType: ia.RD_BORDER_TYPE
+		}))
 	],
-	randomOrder : true
-})
+	randomOrder: true
+});
 
-const {images} = seq.read(inputImages)
+const image = cv.imread('test/data/opencv4nodejs/lenna.png');
+
+seq.toGrid({images: [image, image, image, image, image, image, image, image]}, {
+	filename: 'test/data/opencv4nodejs/lenna-grid.png',
+	imageShape: [300, 300],
+	gridShape: [4, 2]
+});
 ```
 
+### Output is
+
+<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/opencv4nodejs/lenna-grid.png'/>
+
+## Example with tensorflowjs
+
+```javascript
+const h = require('hasard');
+const tf = require('@tensorflow/tfjs-node');
+const ia = require('image-augment')(tf);
+
+// Random example images
+const sometimes = (aug => h.value([aug, ia.identity()]));
+
+const seq = ia.sequential({
+	steps: [
+		ia.fliplr(0.5),
+		ia.flipud(0.5),
+		ia.pad({
+			percent: h.array({size: 2, value: h.number(0, 0.1)}),
+			borderType: ia.RD_BORDER_TYPE,
+			borderValue: h.integer(0, 255)
+		}),
+		sometimes(ia.crop({
+			percent: h.array({size: 2, value: h.number(0, 0.1)})
+		})),
+		sometimes(ia.affine({
+			// Scale images to 80-120% of their size, individually per axis
+			scale: h.array([h.number(0.6, 1.2), h.number(0.6, 1.2)]),
+			// Translate by -20 to +20 percent (per axis)
+			translatePercent: h.array([h.number(-0.2, 0.2), h.number(-0.2, 0.2)]),
+			// Rotate by -45 to +45 degrees
+			rotate: h.number(-45, 45),
+			// Shear by -16 to +16 degrees
+			shear: h.number(-16, 16),
+			// If borderType is constant, use a random rgba value between 0 and 255
+			borderValue: h.array({value: h.integer(0, 255), size: 4}),
+			borderType: ia.RD_BORDER_TYPE
+		}))
+	],
+	randomOrder: true
+});
+
+seq.toGrid(new Array(8).fill('test/data/opencv4nodejs/lenna.png'), {
+	filename: 'test/data/tfjs/lenna-grid.png',
+	imageShape: [300, 300],
+	gridShape: [4, 2]
+});
+```
+### Output is
+
+<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-grid.png'/>
 
 ## Todo list
 
