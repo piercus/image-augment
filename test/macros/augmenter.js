@@ -49,7 +49,7 @@ module.exports = function (t, Cstr, {
 				// Console.log(backend.backendLib.memory().numTensors, startNumTensors);
 
 				debug(`${Cstr.name}/${backend.key} start `);
-				return inst.runAugmenter({images})
+				return inst.read({images})
 					.then(res => {
 						if (backend.key === 'tfjs') {
 							t.true(backend.backendLib.memory().numTensors <= startNumTensors + 2);
