@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: affine-transform.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: affine-transform.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const hasard = require('hasard');
+const AbstractAugmenter = require('./abstract');
+
+/**
+* @typedef {Number  | Hasard.&lt;Number>} NumberArgument
+*/
+/**
+* @typedef {Boolean  | Hasard.&lt;Boolean>} BooleanArgument
+*/
+
+/**
+* A color (3 channels or 4 channels) to use in the augmentation step
+* @typedef {Array.&lt;Number>  | Hasard.&lt;Array.&lt;Number>>} ColorArgument
+*/
+/**
+* @typedef {String  |  Hasard.&lt;String>} BorderTypeArgument
+* describe how to handle the new pixel created by the augmentation step
+* * "constant" : use a constant variable
+* * "transparent" : use transparent pixels
+* * "replicate" : replicate the border's colors
+*/
+
+/**
+*  Applies affine transformations to images.
+* @constructor
+* @param {Object} opts options
+* @param {ArrayXY} [opts.translatePercent = [0,0]] translates
+* @param {ArrayXY} [opts.scale = [1,1]] scale percent
+* @param {NumberArgument} [opts.rotate=0] degrees of rotation
+* @param {NumberArgument} [opts.shear=0] degrees of shear
+* @param {BooleanArgument} [keepSize=false]
+* If true, the output image plane size will be fitted
+* to the distorted image size, i.e. images rotated by 45deg
+* will not be partially outside of the image plane.
+* WARNING : not implemented yet
+* @param {ColorArgument} [opts.borderValue=[0,0,0]] if borderType is "constant" this is used as border pixel values
+* @param {BorderTypeArgument} [opts.borderType="constant"] "constant", "replicate", "transparent"
+* @example
+// Simple usage, Affine transform with scale change
+ia.affine({scale: 1.2});
+* @example
+// Affine transform with rotation of 90° and random scale between 100% and 150%
+ia.affine({scale: h.number(1, 1.5), rotate: 90});
+*/
+
+class AffineTransformAugmenter extends AbstractAugmenter {
+	constructor(opts, ia) {
+		super(opts, ia);
+		const {scale = [1, 1], translatePercent = [0, 0], rotate = 0, shear = 0, keepSize = false, borderValue = [0, 0, 0], borderType = 'constant'} = opts;
+		this.scale = this.toSize2(scale);
+		this.translatePercent = this.toSize2(translatePercent);
+		this.rotate = rotate;
+		this.shear = shear;
+		this.keepSize = keepSize;
+		this.borderValue = borderValue;
+		this.borderType = borderType;
+	}
+
+	buildParams() {
+		const {scale, translatePercent, rotate, shear, borderValue, borderType} = this;
+		return new hasard.Object({
+			scale,
+			translatePercent,
+			rotate,
+			shear,
+			borderValue,
+			borderType
+		});
+	}
+
+	getMatrix({
+		scale,
+		translatePercent,
+		rotate,
+		shear,
+		width,
+		height
+	}) {
+		const centerX = width / 2;
+		const centerY = height / 2;
+		// From http://scikit-image.org/docs/dev/api/skimage.transform.html#skimage.transform.AffineTransform
+
+		const rot = rotate / 180 * Math.PI;
+		const shr = shear / 180 * Math.PI;
+
+		const a0 = scale[0] * Math.cos(rot);
+		const a1 = -1 * scale[1] * Math.sin(rot + shr);
+
+		const a2Base = (translatePercent[0] * width);
+
+		const a2 = a2Base - (a0 * centerX) - (a1 * centerY) + centerX;
+
+		const b0 = scale[0] * Math.sin(rot);
+		const b1 = scale[1] * Math.cos(rot + shr);
+
+		const b2Base = (translatePercent[1] * height);
+		const b2 = b2Base - (b0 * centerY) - (b1 * centerX) + centerY;
+		return this.backend.floatMatrix([[a0, a1, a2], [b0, b1, b2]]);
+	}
+
+	augmentImage({width, height, image}, {
+		scale,
+		translatePercent,
+		rotate,
+		shear,
+		borderValue,
+		borderType
+	}) {
+		const affineMatrix = this.getMatrix({
+			scale,
+			translatePercent,
+			rotate,
+			shear,
+			width,
+			height
+		});
+
+		const res = this.backend.affine(image, {
+			affineMatrix,
+			size: [width, height],
+			borderType,
+			borderValue
+		});
+
+		this.backend.dispose(affineMatrix);
+		return res;
+	}
+
+	augmentPoints({points, width, height}, attr) {
+		const affineMatrix = this.getMatrix(Object.assign({}, attr, {width, height}));
+		const transformPoint = point => {
+			const p3 = this.backend.point3(point.x, point.y, 1);
+			const res = this.backend.matMul(affineMatrix, p3, affineMatrix.type);
+			const p2 = this.backend.point2FromMat(res);
+			const res2 = this.backend.pointToArray(p2);
+			this.backend.dispose(res);
+			return res2;
+		};
+
+		const res = points.map(transformPoint);
+		this.backend.dispose(affineMatrix);
+		return res;
+	}
+}
+
+module.exports = AffineTransformAugmenter;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AbstractAugmenter.html">AbstractAugmenter</a></li><li><a href="AddAugmenter.html">AddAugmenter</a></li><li><a href="AdditiveGaussianNoiseAugmenter.html">AdditiveGaussianNoiseAugmenter</a></li><li><a href="AdditiveNoiseAugmenter.html">AdditiveNoiseAugmenter</a></li><li><a href="AdditivePoissonNoiseAugmenter.html">AdditivePoissonNoiseAugmenter</a></li><li><a href="AddWeightedAugmenter.html">AddWeightedAugmenter</a></li><li><a href="AffineTransformAugmenter.html">AffineTransformAugmenter</a></li><li><a href="BackgroundAugmenter.html">BackgroundAugmenter</a></li><li><a href="BlurAugmenter.html">BlurAugmenter</a></li><li><a href="CropAugmenter.html">CropAugmenter</a></li><li><a href="CropToBoxAugmenter.html">CropToBoxAugmenter</a></li><li><a href="DrawBoxesAugmenter.html">DrawBoxesAugmenter</a></li><li><a href="FliplrAugmenter.html">FliplrAugmenter</a></li><li><a href="FlipudAugmenter.html">FlipudAugmenter</a></li><li><a href="IdentityAugmenter.html">IdentityAugmenter</a></li><li><a href="PadAugmenter.html">PadAugmenter</a></li><li><a href="PerspectiveTransformAugmenter.html">PerspectiveTransformAugmenter</a></li><li><a href="ResizeAugmenter.html">ResizeAugmenter</a></li><li><a href="Sequential.html">Sequential</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 27 2019 13:14:03 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

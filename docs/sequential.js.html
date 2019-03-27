@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: sequential.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: sequential.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const h = require('hasard');
+const debug = require('debug')('image-augmenter:augmenters:sequential');
+const AbstractAugmenter = require('./abstract');
+
+/**
+* Build a sequence of actions
+* @param {Object} opts options
+* @param {Array.&lt;ImageAugment> | Hasard.&lt;Array.&lt;ImageAugment>>} opts.steps steps to be run in sequence
+* @example
+* // Simple usage
+* const img = cv.imread('lenna.jpg');
+* const augmenter = ia.sequential([
+* 	ia.blur(2),
+* 	ia.perspectiveTransform(0.2)
+* ]);
+* const {image} = augmenter.read({images: [img]});
+*/
+
+class Sequential extends AbstractAugmenter {
+	constructor(opts, ia) {
+		super(opts, ia);
+		if (Array.isArray(opts) || h.isHasard(opts)) {
+			this.steps = opts;
+		} else {
+			this.steps = opts.steps;
+		}
+
+		this.hasHasardSteps = h.isHasard(this.steps);
+	}
+
+	buildParams() {
+		return this.steps;
+	}
+
+	augment(o, steps, runOpts) {
+		if (this.hasHasardSteps) {
+			return this._augmentNonParallel(o, steps, runOpts);
+		}
+
+		return this._augmentParallel(o, steps, runOpts);
+	}
+
+	_augmentParallel(o, steps, runOpts) {
+		// When using augmentParallel steps
+		// are not hasard object
+		// then they are the same for each image
+		// so we can run one parrallel process for every image
+
+		return this._runSteps({steps: steps[0], runOpts, images: o.images});
+	}
+
+	_augmentNonParallel(o, steps, runOpts) {
+		// When using _augmentNonParallel
+		// steps are hasard object
+		// then they are not the same for each image
+		// and we cannot parallelize the images processing
+
+		const promises = this.backend.splitImages(o.images).map((image, imageIndex) => {
+			return this._runSteps({steps: steps[imageIndex], runOpts, images: [image]});
+		});
+
+		return Promise.all(promises).then(results => {
+			return {
+				images: results.map(({images}) => images).reduce((a, b) => a.concat(b)),
+				points: results.map(({points}) => points).reduce((a, b) => a.concat(b)),
+				boxes: results.map(({boxes}) => boxes).reduce((a, b) => a.concat(b))
+			};
+		});
+	}
+
+	_runSteps({steps, runOpts, images}) {
+		let promise = Promise.resolve({images, disposable: false});
+		steps.forEach(s => {
+			// Console.log({s})
+			promise = promise.then(current => {
+				return this._runOneStep({step: s, runOpts, current}).then(res => {
+					return res;
+				});
+			});
+		});
+		return promise;
+	}
+
+	_runResolvedStep({step, runOpts, current}) {
+		step.setBackend(this.backend.backendLib);
+		if (!this.backend.isImages(current.images)) {
+			// Console.log(this.backend.isImages.toString(), current)
+			throw (new Error('Can only augment on object with image property in it'));
+		}
+
+		if (this.backend.isEmptyImages(current.images)) {
+			throw (new Error('Empty image not allowed'));
+		}
+
+		const runOpts2 = Object.assign({}, runOpts, current);
+		debug(`Step ${step.constructor.name}/${step.backend.key} started`);
+		return step.run(runOpts2).then(res => {
+			if (current.disposable) {
+				this.backend.dispose(current.images);
+			}
+
+			debug(`Step ${step.constructor.name}/${step.backend.key} done`);
+			return Object.assign({}, res, {disposable: true});
+		});
+	}
+
+	_runOneStep({step, runOpts, current}) {
+		if (h.isHasard(step)) {
+			const promises = this.backend.splitImages(current.images).map(image => {
+				const stepResolved = step.runOnce(runOpts);
+				return this._runResolvedStep({step: stepResolved, runOpts, current: Object.assign({}, current, {images: [image]})});
+			});
+			return Promise.all(promises).then(results => {
+				return {
+					images: results.map(({images}) => images).reduce((a, b) => a.concat(b)),
+					points: results.map(({points}) => points).reduce((a, b) => a.concat(b)),
+					boxes: results.map(({boxes}) => boxes).reduce((a, b) => a.concat(b))
+				};
+			});
+		}
+
+		return this._runResolvedStep({step, runOpts, current});
+	}
+}
+module.exports = Sequential;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AbstractAugmenter.html">AbstractAugmenter</a></li><li><a href="AddAugmenter.html">AddAugmenter</a></li><li><a href="AdditiveGaussianNoiseAugmenter.html">AdditiveGaussianNoiseAugmenter</a></li><li><a href="AdditiveNoiseAugmenter.html">AdditiveNoiseAugmenter</a></li><li><a href="AdditivePoissonNoiseAugmenter.html">AdditivePoissonNoiseAugmenter</a></li><li><a href="AddWeightedAugmenter.html">AddWeightedAugmenter</a></li><li><a href="AffineTransformAugmenter.html">AffineTransformAugmenter</a></li><li><a href="BackgroundAugmenter.html">BackgroundAugmenter</a></li><li><a href="BlurAugmenter.html">BlurAugmenter</a></li><li><a href="CropAugmenter.html">CropAugmenter</a></li><li><a href="CropToBoxAugmenter.html">CropToBoxAugmenter</a></li><li><a href="DrawBoxesAugmenter.html">DrawBoxesAugmenter</a></li><li><a href="FliplrAugmenter.html">FliplrAugmenter</a></li><li><a href="FlipudAugmenter.html">FlipudAugmenter</a></li><li><a href="IdentityAugmenter.html">IdentityAugmenter</a></li><li><a href="PadAugmenter.html">PadAugmenter</a></li><li><a href="PerspectiveTransformAugmenter.html">PerspectiveTransformAugmenter</a></li><li><a href="ResizeAugmenter.html">ResizeAugmenter</a></li><li><a href="Sequential.html">Sequential</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 27 2019 13:14:03 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

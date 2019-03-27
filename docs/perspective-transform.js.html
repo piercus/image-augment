@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: perspective-transform.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: perspective-transform.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const hasard = require('hasard');
+const AbstractAugmenter = require('./abstract');
+/**
+* Applies a random four-point perspective transform to the image (kinda like an advanced form of cropping).
+* Each point has a random distance from the image corner, derived from a normal distribution with sigma `sigma`.
+*
+* Warning : this is only working with opencv4nodejs backend
+*
+* @param {Object} sigma options
+* @param {NumberArgument} sigma.sigma the sigma of the normal distribution
+* @param {BooleanArgument} sigma.keepSize If `keepSize` is set to True (default), each image will be resized back to its original size.
+* @param {ColorArgument} [sigma.borderValue=[0,0,0]] if borderType is "constant" this is used as border pixel values
+* @param {BorderTypeArgument} [sigma.borderType="constant"] can be "constant", "replicate", "transparent"
+* @param {Array.&lt;Array.&lt;Number>>} [sigma.cornersVariation=null] if set, sigma is not used. For more deterministic behavior, use this to set manually the percent (x,y) variation of each corner
+* @example
+// Simple usage, perspective transform on a sigma=10% random perspective tarnsform
+ia.perspectiveTransform(0.1);
+* @example
+// Now replicate the borders
+ia.perspectiveTransform({
+	sigma: 0.1,
+	borderType: "replicate"
+});
+*/
+
+class PerspectiveTransformAugmenter extends AbstractAugmenter {
+	constructor(opts, ia) {
+		let o;
+		if (typeof (opts) === 'number' || hasard.isHasard(opts)) {
+			o = {sigma: opts};
+		} else {
+			o = opts;
+		}
+
+		super(o, ia);
+		const {sigma, keepSize, borderValue = [0, 0, 0], borderType = 'constant', cornersVariation} = o;
+		this.sigma = this.toSize2(sigma) || [0, 0];
+		this.keepSize = keepSize;
+		this.borderValue = borderValue;
+		this.borderType = borderType;
+		this.cornersVariation = cornersVariation;
+	}
+
+	buildParams() {
+		return new hasard.Object({
+			cornersVariation: this.cornersVariation || new hasard.Array({
+				size: 4,
+				value: new hasard.Array([
+					new hasard.Number({
+						type: 'normal',
+						std: hasard.getProperty(0, this.sigma)
+					}),
+					new hasard.Number({
+						type: 'normal',
+						std: hasard.getProperty(1, this.sigma)
+					})
+				])
+			}),
+			borderValue: this.borderValue,
+			borderType: this.borderType
+		});
+	}
+
+	getTransformationMatrix({cornersVariation, width, height}) {
+		const cornersSrc = [[0, 0], [1, 0], [0, 1], [1, 1]];
+		const srcPoints = cornersSrc.map(c => this.backend.point(c[0] * width, c[1] * height));
+
+		const destPoints = cornersSrc.map((c, index) => this.backend.point((c[0] + cornersVariation[index][0]) * width, (c[1] + cornersVariation[index][1]) * height));
+		return this.backend.getPerspectiveTransform(srcPoints, destPoints);
+	}
+
+	augmentImage({image, width, height}, {cornersVariation, borderValue, borderType}) {
+		const transformationMatrix = this.getTransformationMatrix({width, height, cornersVariation});
+		return this.backend.perspective(image, {transformationMatrix, size: [width, height], borderType, borderValue});
+	}
+
+	augmentPoints({points, width, height}, {cornersVariation}) {
+		const transformationMatrix = this.getTransformationMatrix({width, height, cornersVariation});
+
+		const transformPoint = point => {
+			const res = this.backend.matMul(transformationMatrix, this.backend.point3(point.x, point.y, 1), transformationMatrix.type);
+
+			return [
+				res.at(0, 0) / res.at(2, 0),
+				res.at(1, 0) / res.at(2, 0)
+			];
+		};
+
+		const res = points.map(transformPoint);
+		return res;
+	}
+}
+
+module.exports = PerspectiveTransformAugmenter;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AbstractAugmenter.html">AbstractAugmenter</a></li><li><a href="AddAugmenter.html">AddAugmenter</a></li><li><a href="AdditiveGaussianNoiseAugmenter.html">AdditiveGaussianNoiseAugmenter</a></li><li><a href="AdditiveNoiseAugmenter.html">AdditiveNoiseAugmenter</a></li><li><a href="AdditivePoissonNoiseAugmenter.html">AdditivePoissonNoiseAugmenter</a></li><li><a href="AddWeightedAugmenter.html">AddWeightedAugmenter</a></li><li><a href="AffineTransformAugmenter.html">AffineTransformAugmenter</a></li><li><a href="BackgroundAugmenter.html">BackgroundAugmenter</a></li><li><a href="BlurAugmenter.html">BlurAugmenter</a></li><li><a href="CropAugmenter.html">CropAugmenter</a></li><li><a href="CropToBoxAugmenter.html">CropToBoxAugmenter</a></li><li><a href="DrawBoxesAugmenter.html">DrawBoxesAugmenter</a></li><li><a href="FliplrAugmenter.html">FliplrAugmenter</a></li><li><a href="FlipudAugmenter.html">FlipudAugmenter</a></li><li><a href="IdentityAugmenter.html">IdentityAugmenter</a></li><li><a href="PadAugmenter.html">PadAugmenter</a></li><li><a href="PerspectiveTransformAugmenter.html">PerspectiveTransformAugmenter</a></li><li><a href="ResizeAugmenter.html">ResizeAugmenter</a></li><li><a href="Sequential.html">Sequential</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 27 2019 13:14:03 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
