@@ -4,7 +4,10 @@ node_js:
 install:
   - npm install -g codecov nyc doxdox
   - npm install
-
+cache:
+  directories:
+   - node_modules/opencv-build
+   
 script:
   - npm run lint
   - npm run doc

@@ -7,7 +7,7 @@
     "benchmark": "DEBUG_COLORS=0 DEBUG=image-augmenter:augmenters:sequential node test/benchmark/benchmark.js",
     "lint": "xo",
     "doc": "jsdoc lib/augmenters/*.js -d docs -c jsdoc.conf.json",
-    "test": "nyc ava test/augmenters/* test/generators/*",
+    "test": "nyc ava test/augmenters/* test/generators/* --serial",
     "semantic-release": "semantic-release",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
