@@ -1,7 +1,5 @@
 # image-augment
 
-WORK IN PROGRESS ...
-
 Augment images (geometric, noise, ...) for visual machine learning data augmentation.
 
 This library has been freely inspired from [imgaug](https://github.com/aleju/imgaug)
@@ -155,9 +153,15 @@ Output :
 
 <img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-grid.png'/>
 
+## API documentation
+
+See [here](./docs)
+
 ## Discussion
 
-### Opencv4nodejs vs tensorflowjs advantages
+### Opencv4nodejs vs Tensorflowjs
+
+Both librairies have advantages, this is what you need to know
 
 Why opencv4nodejs : 
 * easier to manipulate files in node.js (cv.imread ...)
@@ -169,17 +173,22 @@ Why tensorflowjs :
 * integrate with DL training
 * Fast Noise image generation (truncatedNormal)
 
+See [benchmark](./doc/BENCHMARK.md) for more info about performance
 
 ## Todo list
 
-[ ] Add benchmark test to measure the speed
+Help appreciated, please [open an issue][] if you have any question.
+
+[x] Add benchmark test to measure the speed
 [x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
 [x] Get affine transform to work with tensorflow backend
-[ ] Faster noise generator
-[ ] Add unit test and examples for cropToBox and DrawBoxes
+[x] add examples/explanations/benchmark in the README.md
+[ ] Run all unit tests on Travis
+[ ] Speed up all non-batch implemented tensorflow augmenters
 [ ] Generate documentation on github
+[ ] Add more augmenters
+[ ] Add unit test and examples for cropToBox and DrawBoxes
 [ ] Stream API
-[ ] add examples/explanations/benchmark in the README.md
 [ ] create a demo app running in the browser with tfjs + webgl
 [ ] Implement perspective Transform using tensorflowjs backend
-[ ] Run all unit tests on Travis
+[ ] Faster noise generator

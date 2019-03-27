@@ -21,7 +21,9 @@ const backendLibs = [
 const imageAugment = require('../..');
 const formatBenchmark = require('./format-benchmark');
 
-const batchSize = 25;
+const gridSide = 5;
+
+const batchSize = gridSide*gridSide;
 
 const filenames = new Array(batchSize).fill(path.join(__dirname, '../data', 'opencv4nodejs', 'lenna.png'));
 
@@ -38,7 +40,7 @@ PromiseBlue.map(backendLibs, backendLib => {
 				value: h.array({size: 3, value: h.integer(0, 10)})
 			}),
 			ia.additiveNoise(h.number(0, 2)),
-			ia.affineTransform({
+			ia.affine({
 				scale: h.number(0.2, 1)
 			}),
 			ia.blur(h.integer(1, 50)),
@@ -51,11 +53,12 @@ PromiseBlue.map(backendLibs, backendLib => {
 	return augmenter.fromFilenames({
 		filenames
 	}).then(result => {
-		console.log(result);
-		return augmenter.backend.writeImagesGrid(
-			imageGridPrefix + augmenter.backend.key + '.png',
-			result.images
-		).then(() => {
+		return augmenter.backend.writeImagesGrid({
+			filename: imageGridPrefix + augmenter.backend.key + '.png',
+			gridShape: [gridSide, gridSide],
+			imageShape: [200, 200],
+			images: result.images
+		}).then(() => {
 			return result;
 		});
 	}).then(result => {

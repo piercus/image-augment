@@ -7,11 +7,11 @@ See the [benchmark code](../test/benchmark/benchmark.js)
 See the [benchmark result image grid](../test/benchmark/output)
 
 | | opencv4nodejs | tfjs |
-| AddWeightedAugmenter | 1268 ms | 783 ms |
-| AddAugmenter | 1242 ms | 291 ms |
-| AdditiveNoiseAugmenter | 210206 ms | 86 ms |
-| AffineTransformAugmenter | 25 ms | 1379 ms |
-| BlurAugmenter | 22 ms | 448 ms |
-| CropAugmenter | 5 ms | 125 ms |
-| PadAugmenter | 7 ms | 347 ms |
-| ResizeAugmenter | 80 ms | 81 ms |
+| AddWeightedAugmenter | 1251 ms | 828 ms |
+| AddAugmenter | 1256 ms | 293 ms |
+| AdditiveNoiseAugmenter | 206835 ms | 93 ms |
+| AffineTransformAugmenter | 22 ms | 1377 ms |
+| BlurAugmenter | 26 ms | 484 ms |
+| CropAugmenter | 7 ms | 86 ms |
+| PadAugmenter | 8 ms | 208 ms |
+| ResizeAugmenter | 127 ms | 66 ms |

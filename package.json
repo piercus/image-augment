@@ -6,7 +6,7 @@
   "scripts": {
     "benchmark": "DEBUG_COLORS=0 DEBUG=image-augmenter:augmenters:sequential node test/benchmark/benchmark.js",
     "lint": "xo",
-    "doc": "doxdox 'lib/augmenters/*.js' --layout markdown --output doc/DOCUMENTATION.md",
+    "doc": "jsdoc lib/augmenters/*.js -d docs -c jsdoc.conf.json",
     "test": "nyc ava test/augmenters/* test/generators/*",
     "semantic-release": "semantic-release",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
