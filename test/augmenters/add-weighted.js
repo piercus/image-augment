@@ -1,4 +1,5 @@
 const test = require('ava');
+const path = require('path');
 const AddWeighted = require('../../lib/augmenters/add-weighted');
 const macroAugmenter = require('../macros/augmenter');
 
@@ -12,3 +13,11 @@ test('add weighted', macroAugmenter, AddWeighted, {
 	}
 });
 
+test('add weighted on empty input', macroAugmenter, AddWeighted, {
+	inputFilenames: [],
+	//	DebugOutput: path.join(__dirname, '../..', 'tmp/lenna-light.png'),
+	options: {
+		value: [255, 255, 255],
+		alpha: 0.3
+	}
+});

@@ -13,7 +13,7 @@ module.exports = function (t, Cstr, {
 	outputPoints,
 	expectImg,
 	backendLibs = [
-		// Require('opencv4nodejs'),
+		require('opencv4nodejs'),
 		require('@tensorflow/tfjs-node-gpu')
 	]
 }) {
@@ -47,7 +47,6 @@ module.exports = function (t, Cstr, {
 		return backend.readImages(inputs)
 			.then(images => {
 				// Console.log(backend.backendLib.memory().numTensors, startNumTensors);
-
 				debug(`${Cstr.name}/${backend.key} start `);
 				return inst.read({images})
 					.then(res => {

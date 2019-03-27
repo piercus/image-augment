@@ -43,90 +43,18 @@ const basicAugmentation = ia.sequential([
 	ia.blur(3)
 ]);
 
-const {images} = basicAugmentation.read({images : inputImages})
+const {images} = basicAugmentation.read('lenna.jpg')
+
+// images is a tensor4d image 
+// or a [tensor4d] when output images have different shapes
+
 ```
 
-## Real-life example
+Output is :
 
-```javascript
-// First you need a backend for image processing
-// this can be one of the following : 
-// * @tensorflow/tfjs, 
-// * @tensorflow/tfjs-node
-// * @tensorflow/tfjs-node-gpu
-// * opencv4nodejs
+<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-example.png'/>
 
-const tf = require('@tensorflow/tfjs-node');
-
-// Then initialize with the backend
-
-const ia = require('image-augment')(tf);
-
-// if you want to customize randomness 
-// in your augmentation pipeline
-// you need to use 'hasard' library also
-
-const h = require('hasard');
-
-// create an augmentation pipeline
-const basicAugmentation = ia.sequential([
-	// add a noise
-	ia.additiveNoise(15),
-	// add a random affine transform
-	ia.affineTransform({
-		// shear from -15 to 15°
-		shear: h.number(-15, 15), 
-		// rotate from -30 to 30°
-		rotate: h.number(0, 30), 
-		 // translate between -10% to + 10% along x and y axis
-		translatePercent: h.array({size: 2, value: h.number(-0.1, 0.1)}),
-	}),
-	// add a blur kernel between 0 and 5
-	ia.blur(h.integer(0, 5))
-]);
-
-// load images in tensorflow using Jimp and fs 
-// (this can be done with any other lib)
-const Jimp = require('jimp');
-const buffer = fs.readFileSync('lenna.png');
-return Jimp.read(buffer).then(imageJimp => {
-	
-	const images = this._tf.tensor4d(
-		new Uint8Array(imageJimp.bitmap.data), 
-		[1, imageJimp.bitmap.height, imageJimp.bitmap.width, 4], 
-		'int32');
-	
-	// Now use the augmentation pipeline
-	const {images} = basicAugmentation.run({images})
-});
-```
-
-## Simple example with opencv4nodejs
-
-```javascript
-
-const cv = require('opencv4nodejs');
-
-// Then initialize with the backend
-
-const ia = require('image-augment')(cv);
-
-// create an augmentation pipeline
-const basicAugmentation = ia.sequential([
-	// add a noise with a standard deviation of 15
-	ia.additiveNoise(15),
-	// rotate 30°
-	ia.affineTransform({ rotate: 30 }),
-	// add a blur kernel of 3 pixel
-	ia.blur(3)
-]);
-
-const img = cv.imread('lenna.png');
-
-const {images} = basicAugmentation.run({images : [img]})
-```
-
-## Sequence example with opencv4nodejs
+## Grid example with opencv4nodejs
 
 ```javascript
 const h = require('hasard');
@@ -174,11 +102,11 @@ seq.toGrid({images: [image, image, image, image, image, image, image, image]}, {
 });
 ```
 
-### Output is
+Output :
 
 <img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/opencv4nodejs/lenna-grid.png'/>
 
-## Example with tensorflowjs
+## Grid Example with tensorflowjs
 
 ```javascript
 const h = require('hasard');
@@ -223,9 +151,24 @@ seq.toGrid(new Array(8).fill('test/data/opencv4nodejs/lenna.png'), {
 	gridShape: [4, 2]
 });
 ```
-### Output is
+Output :
 
 <img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-grid.png'/>
+
+## Discussion
+
+### Opencv4nodejs vs tensorflowjs advantages
+
+Why should i use opencv4nodejs : 
+* easier to manipulate files in node.js (cv.imread ...)
+* perspective transform function
+* Using different image sizes
+
+Why tensorflowjs : 
+* Browser support
+* integrate with DL training
+* Fast Noise image generation (truncatedNormal)
+
 
 ## Todo list
 
