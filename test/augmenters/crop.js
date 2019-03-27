@@ -34,7 +34,7 @@ test('crop kernel 10%x30%x0%x5%', macroAugmenter, Crop, {
 test('crop on 3 images with hasard', macroAugmenter, Crop, {
 	inputFilenames: ['lenna.png', 'lenna.png', 'lenna.png'],
 	options: {
-		size: h.number(0,10)
+		size: h.number(0, 10)
 	},
 	expectImg(t, mats1, mats2, backend) {
 		const metadata = backend.getMetadata(mats2);

@@ -1,5 +1,5 @@
 const test = require('ava');
-const h = require('hasard')
+const h = require('hasard');
 const Pad = require('../../lib/augmenters/pad');
 const macroAugmenter = require('../macros/augmenter');
 
@@ -49,6 +49,6 @@ test('pad on 3 images', macroAugmenter, Pad, {
 test('pad on 3 images with hasard', macroAugmenter, Pad, {
 	inputFilenames: ['lenna.png', 'lenna.png', 'lenna.png'],
 	options: {
-		size: h.number(0,10)
+		size: h.number(0, 10)
 	}
 });

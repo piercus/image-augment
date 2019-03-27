@@ -42,7 +42,7 @@ PromiseBlue.map(backendLibs, backendLib => {
 				scale: h.number(0.2, 1)
 			}),
 			ia.blur(h.integer(1, 50)),
-			ia.crop(10),
+			ia.crop(h.number(0, 20)),
 			ia.pad(10),
 			ia.resize(200)
 		]

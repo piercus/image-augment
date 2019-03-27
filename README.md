@@ -159,10 +159,10 @@ Output :
 
 ### Opencv4nodejs vs tensorflowjs advantages
 
-Why should i use opencv4nodejs : 
+Why opencv4nodejs : 
 * easier to manipulate files in node.js (cv.imread ...)
 * perspective transform function
-* Using different image sizes
+* Using different image sizes with no impact
 
 Why tensorflowjs : 
 * Browser support

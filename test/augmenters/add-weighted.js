@@ -1,5 +1,4 @@
 const test = require('ava');
-const path = require('path');
 const AddWeighted = require('../../lib/augmenters/add-weighted');
 const macroAugmenter = require('../macros/augmenter');
 

@@ -10,7 +10,7 @@ test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTrun
 	// BackendLibs: [require('opencv4nodejs')],
 	expectImg(t, mats1, mats2, backend) {
 		const metadatas = backend.getMetadata(mats1);
-		const metadata = metadatas[0]
+		const metadata = metadatas[0];
 		const diff = backend.diff(mats1, mats2);
 		const size = (metadatas.length * metadata.width * metadata.height * 3);
 		const norm = backend.normL1(diff) / size;
