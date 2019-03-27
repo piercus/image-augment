@@ -191,4 +191,4 @@ Help appreciated, please [open an issue][] if you have any question.
 [ ] Stream API
 [ ] create a demo app running in the browser with tfjs + webgl
 [ ] Implement perspective Transform using tensorflowjs backend
-[ ] Faster noise generator
+[ ] Faster gaussian and poisson noise generators
