@@ -15,8 +15,8 @@ module.exports = function (t, Cstr, {
 	backendLibs = [
 		require('opencv4nodejs'),
 		require('@tensorflow/tfjs-node')
-		//,
-		//require('@tensorflow/tfjs-node-gpu')
+		// ,
+		// require('@tensorflow/tfjs-node-gpu')
 	]
 }) {
 	return PromiseBlue.map(backendLibs, backendLib => {

@@ -4,6 +4,8 @@ node_js:
 install:
   - npm install -g codecov nyc doxdox
   - npm install
+  - mkdir tmp
+
 cache:
   directories:
    - node_modules/opencv-build

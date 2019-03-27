@@ -23,7 +23,7 @@ const formatBenchmark = require('./format-benchmark');
 
 const gridSide = 5;
 
-const batchSize = gridSide*gridSide;
+const batchSize = gridSide * gridSide;
 
 const filenames = new Array(batchSize).fill(path.join(__dirname, '../data', 'opencv4nodejs', 'lenna.png'));
 

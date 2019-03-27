@@ -17,10 +17,11 @@ test('truncated-normal noise', macroGenerator, TruncatedNormalNoise, {
 	// 	path.join(__dirname, '../..', 'tmp/truncated-normal-noise3.png')
 	// ],
 	expectImg: (t, {images}, backend) => {
-		const {width, height, nImages} = backend.getMetadata(images);
+		const metadatas = backend.getMetadata(images);
+		const [{width, height}] = metadatas;
 		t.is(width, wdth);
 		t.is(height, hght);
-		t.is(nImages, imageNumber);
+		t.is(metadatas.length, imageNumber);
 		const flatten = a => {
 			return a.reduce((flat, i) => {
 				if (Array.isArray(i)) {
@@ -34,9 +35,9 @@ test('truncated-normal noise', macroGenerator, TruncatedNormalNoise, {
 		const flat = flatten(backend.imageToArray(images));
 
 		const sum = flat.reduce((a, b) => a + b, 0);
-		const l2 = (width * height * channels * nImages);
+		const l2 = (width * height * channels * imageNumber);
 		const average = (sum / l2);
-		const tolerance = 1000 / Math.sqrt(width * height * channels * nImages);
+		const tolerance = 1000 / Math.sqrt(width * height * channels * imageNumber);
 		t.true(
 			Math.abs(average - mean) < tolerance
 		);
@@ -66,10 +67,11 @@ test('truncated-normal noise with hasard', macroGenerator, TruncatedNormalNoise,
 	// 	path.join(__dirname, '../..', 'tmp/truncated-normal-noise9.png')
 	// ],
 	expectImg: (t, {images}, backend) => {
-		const {width, height, nImages} = backend.getMetadata(images);
+		const metadatas = backend.getMetadata(images);
+		const [{width, height}] = metadatas;
 		t.is(width, wdth);
 		t.is(height, hght);
-		t.is(nImages, imageNumber);
+		t.is(metadatas.length, imageNumber);
 	},
 	width: wdth,
 	height: hght,

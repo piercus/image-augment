@@ -3,18 +3,21 @@ const test = require('ava');
 const GaussianNoise = require('../../lib/generators/gaussian-noise');
 const macroGenerator = require('../macros/generator');
 
-const width = 59;
-const height = 47;
+const wdth = 59;
+const hght = 47;
 const channels = 3;
 const mean = 128;
 const sigma = 50;
 
 test('gaussian-noise', macroGenerator, GaussianNoise, {
-	debugOutput: path.join(__dirname, '../..', 'tmp/gaussian-noise.png'),
-	expectImg: (t, img) => {
-		t.is(img.cols, width);
-		t.is(img.rows, height);
-		const sum = img.getDataAsArray()
+	debugOutput: [path.join(__dirname, '../..', 'tmp/gaussian-noise.png')],
+	expectImg: (t, {images}, backend) => {
+		const metadatas = backend.getMetadata(images);
+		const [{width, height}] = metadatas;
+		t.is(width, wdth);
+		t.is(height, hght);
+		const sum = backend.imageToArray(images)
+			.reduce((a, b) => a.concat(b))
 			.reduce((a, b) => a.concat(b))
 			.reduce((a, b) => a.concat(b))
 			.reduce((a, b) => a + b);
@@ -23,8 +26,8 @@ test('gaussian-noise', macroGenerator, GaussianNoise, {
 			Math.abs((sum / (width * height * channels)) - mean) < 100 / Math.sqrt(width * height * channels)
 		);
 	},
-	width,
-	height,
+	width: wdth,
+	height: hght,
 	channels,
 	options: {
 		mean,
