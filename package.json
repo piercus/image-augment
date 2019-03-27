@@ -52,7 +52,8 @@
   "xo": {
     "rules": {
       "no-new": 1
-    }
+    },
+    "ignores": ["docs"]
   },
   "bugs": {
     "url": "https://github.com/piercus/image-augment/issues"
