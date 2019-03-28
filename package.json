@@ -53,7 +53,9 @@
     "rules": {
       "no-new": 1
     },
-    "ignores": ["docs"]
+    "ignores": [
+      "docs"
+    ]
   },
   "bugs": {
     "url": "https://github.com/piercus/image-augment/issues"
@@ -71,6 +73,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "hasard": "^1.5.0",
-    "jimp": "^0.6.0"
+    "jimp": "^0.6.0",
+    "linear-solve": "^1.2.1"
   }
 }
