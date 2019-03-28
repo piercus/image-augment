@@ -53,7 +53,9 @@
     "rules": {
       "no-new": 1
     },
-    "ignores": ["docs"]
+    "ignores": [
+      "docs"
+    ]
   },
   "bugs": {
     "url": "https://github.com/piercus/image-augment/issues"
@@ -64,6 +66,7 @@
     "@tensorflow/tfjs-node-gpu": "^1.0.0",
     "ava": "^1.2.1",
     "bluebird": "^3.5.3",
+    "jsdoc": "^3.5.5",
     "opencv4nodejs": "^4.14.1",
     "semantic-release": "^15.13.3",
     "xo": "^0.24.0"
