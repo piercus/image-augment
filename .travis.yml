@@ -2,13 +2,13 @@ language: node_js
 node_js:
   - '8'
 install:
-  - npm install -g codecov nyc doxdox
   - npm install
   - mkdir tmp
 
 cache:
   directories:
    - node_modules/opencv-build
+   - node_modules/opencv4nodejs
    
 script:
   - npm run lint
