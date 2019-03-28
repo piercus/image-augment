@@ -184,6 +184,7 @@ Help appreciated, please [open an issue][] if you have any question.
 [x] Get affine transform to work with tensorflow backend
 [x] add examples/explanations/benchmark in the README.md
 [ ] Run all unit tests on Travis
+[ ] Remove jimp deps
 [ ] Speed up all non-batch implemented tensorflow augmenters
 [ ] Generate documentation on github
 [ ] Add more augmenters
