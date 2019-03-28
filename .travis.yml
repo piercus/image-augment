@@ -15,9 +15,6 @@ script:
   - npm run doc
   - npm test
 
-after_success:
-  - npm run report-coverage
-
 deploy:
   provider: script
   skip_cleanup: true
