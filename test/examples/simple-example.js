@@ -60,7 +60,7 @@ fileToTensor('test/data/tfjs/lenna.png')
 		return basicAugmentation.read({images});
 	})
 	.then(({images}) => {
-		return tensorToFile('test/data/tfjs/lenna.png', {images});
+		return tensorToFile('test/data/tfjs/lenna-example.png', {images});
 	})
 	.then(() => {
 		console.log('done');
