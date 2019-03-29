@@ -155,7 +155,7 @@ Output :
 
 ## API documentation
 
-See [here](./docs)
+See [documentation](https://piercus.github.io/image-augment)
 
 ## Discussion
 
