@@ -67,6 +67,7 @@
     "bluebird": "^3.5.3",
     "jsdoc": "^3.5.5",
     "opencv4nodejs": "^4.14.1",
+    "pngjs": "^3.4.0",
     "semantic-release": "^15.13.3",
     "xo": "^0.24.0"
   },
