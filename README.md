@@ -165,8 +165,7 @@ Both librairies have advantages, this is what you need to know
 
 Why opencv4nodejs : 
 * easier to manipulate files in node.js (cv.imread ...)
-* perspective transform function
-* Using different image sizes with no impact
+* Using different image sizes with no impact on performance
 
 Why tensorflowjs : 
 * Browser support
@@ -183,13 +182,14 @@ Help appreciated, please [open an issue](https://github.com/piercus/image-augmen
 - [x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
 - [x] Get affine transform to work with tensorflow backend
 - [x] add examples/explanations/benchmark in the README.md
-- [ ] Run all unit tests on Travis
+- [x] Run all unit tests on Travis
+- [x] Implement perspective Transform using tensorflowjs backend
+- [x] Put documentation on github pages
+- [ ] Auto documentation update with travis
 - [ ] Remove jimp deps
 - [ ] Speed up all non-batch implemented tensorflow augmenters
-- [ ] Generate documentation on github
 - [ ] Add more augmenters
 - [ ] Add unit test and examples for cropToBox and DrawBoxes
 - [ ] Stream API
 - [ ] create a demo app running in the browser with tfjs + webgl
-- [ ] Implement perspective Transform using tensorflowjs backend
 - [ ] Faster gaussian and poisson noise generators
