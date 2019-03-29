@@ -177,19 +177,19 @@ See [benchmark](./doc/BENCHMARK.md) for more info about performance
 
 ## Todo list
 
-Help appreciated, please [open an issue][] if you have any question.
+Help appreciated, please [open an issue](https://github.com/piercus/image-augment/issues/new) if you have any question.
 
-[x] Add benchmark test to measure the speed
-[x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
-[x] Get affine transform to work with tensorflow backend
-[x] add examples/explanations/benchmark in the README.md
-[ ] Run all unit tests on Travis
-[ ] Remove jimp deps
-[ ] Speed up all non-batch implemented tensorflow augmenters
-[ ] Generate documentation on github
-[ ] Add more augmenters
-[ ] Add unit test and examples for cropToBox and DrawBoxes
-[ ] Stream API
-[ ] create a demo app running in the browser with tfjs + webgl
-[ ] Implement perspective Transform using tensorflowjs backend
-[ ] Faster gaussian and poisson noise generators
+- [x] Add benchmark test to measure the speed
+- [x] Faster random generator using [tensorflow js truncated normal](https://js.tensorflow.org/api/1.0.0/#truncatedNormal)
+- [x] Get affine transform to work with tensorflow backend
+- [x] add examples/explanations/benchmark in the README.md
+- [ ] Run all unit tests on Travis
+- [ ] Remove jimp deps
+- [ ] Speed up all non-batch implemented tensorflow augmenters
+- [ ] Generate documentation on github
+- [ ] Add more augmenters
+- [ ] Add unit test and examples for cropToBox and DrawBoxes
+- [ ] Stream API
+- [ ] create a demo app running in the browser with tfjs + webgl
+- [ ] Implement perspective Transform using tensorflowjs backend
+- [ ] Faster gaussian and poisson noise generators
