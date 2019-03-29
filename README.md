@@ -50,7 +50,7 @@ const {images} = basicAugmentation.read('lenna.jpg')
 
 Output is :
 
-<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-grid.png'/>
+<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-example.png'/>
 
 ## Grid example with opencv4nodejs
 
