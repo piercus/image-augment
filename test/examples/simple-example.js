@@ -1,15 +1,14 @@
 // Tfjs does not provide any read/write manipulation
 // function on nodejs, so we nee to to this with pngjs
-
-const {PNG} = require('pngjs');
 const fs = require('fs');
+const {PNG} = require('pngjs');
 
 const fileToTensor = function (filename) {
 	return new Promise((resolve, reject) => {
 		const inputPng = new PNG();
 		fs.createReadStream(filename)
-		  .pipe(inputPng)
-		  .on('parsed', () => {
+			.pipe(inputPng)
+			.on('parsed', () => {
 				const images = tf.tensor4d(inputPng.data, [1, inputPng.height, inputPng.width, 4]);
 				resolve({images});
 			})
