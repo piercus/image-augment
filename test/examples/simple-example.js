@@ -1,23 +1,23 @@
-// tfjs does not provide any read/write manipulation 
+// Tfjs does not provide any read/write manipulation
 // function on nodejs, so we nee to to this with pngjs
 
-const PNG = require('pngjs').PNG;
+const {PNG} = require('pngjs');
 const fs = require('fs');
 
-const fileToTensor = function(filename){
+const fileToTensor = function (filename) {
 	return new Promise((resolve, reject) => {
-		const inputPng = new PNG()
+		const inputPng = new PNG();
 		fs.createReadStream(filename)
 		  .pipe(inputPng)
-		  .on('parsed', function() {
-				const images = tf.tensor4d(inputPng.data, [1, inputPng.height, inputPng.width, 4])
-				resolve({images})
+		  .on('parsed', () => {
+				const images = tf.tensor4d(inputPng.data, [1, inputPng.height, inputPng.width, 4]);
+				resolve({images});
 			})
-			.on('error', reject)
-	})
-}
+			.on('error', reject);
+	});
+};
 
-const tensorToFile = function(filename, {images}){
+const tensorToFile = function (filename, {images}) {
 	return new Promise((resolve, reject) => {
 		const png = new PNG({
 			width: images.shape[2],
@@ -28,13 +28,13 @@ const tensorToFile = function(filename, {images}){
 			.pack()
 			.pipe(fs.createWriteStream(filename))
 			.on('error', reject)
-			.on('close', resolve)
-	})
-}
+			.on('close', resolve);
+	});
+};
 
 // First you need a backend for image processing
-// this can be one of the following : 
-// * @tensorflow/tfjs 
+// this can be one of the following :
+// * @tensorflow/tfjs
 // * @tensorflow/tfjs-node
 // * @tensorflow/tfjs-node-gpu
 // * opencv4nodejs
@@ -45,23 +45,23 @@ const tf = require('@tensorflow/tfjs-node');
 
 const ia = require('../..')(tf);
 
-// create an augmentation pipeline
+// Create an augmentation pipeline
 const basicAugmentation = ia.sequential([
-	// add a noise with a standard deviation of 15
+	// Add a noise with a standard deviation of 15
 	ia.additiveNoise(15),
-	// rotate 30°
-	ia.affine({ rotate: 30 }),
-	// add a blur kernel of 3 pixel
+	// Rotate 30°
+	ia.affine({rotate: 30}),
+	// Add a blur kernel of 3 pixel
 	ia.blur(3)
 ]);
 
 fileToTensor('test/data/tfjs/lenna.png')
-.then(({images}) => {
-	return basicAugmentation.read({images});
-})
-.then(({images}) => {
-	return tensorToFile('test/data/tfjs/lenna.png', {images})
-})
-.then(() => {
-	console.log('done')
-})
+	.then(({images}) => {
+		return basicAugmentation.read({images});
+	})
+	.then(({images}) => {
+		return tensorToFile('test/data/tfjs/lenna.png', {images});
+	})
+	.then(() => {
+		console.log('done');
+	});

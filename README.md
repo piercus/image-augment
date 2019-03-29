@@ -19,8 +19,8 @@ npm install image-augment
 
 ```javascript
 // First you need a backend for image processing
-// this can be one of the following : 
-// * @tensorflow/tfjs 
+// this can be one of the following :
+// * @tensorflow/tfjs
 // * @tensorflow/tfjs-node
 // * @tensorflow/tfjs-node-gpu
 // * opencv4nodejs
@@ -29,22 +29,31 @@ const tf = require('@tensorflow/tfjs-node');
 
 // Then initialize with the backend
 
-const ia = require('image-augment')(tf);
+const ia = require('../..')(tf);
 
-// create an augmentation pipeline
+// Create an augmentation pipeline
 const basicAugmentation = ia.sequential([
-	// add a noise with a standard deviation of 15
+	// Add a noise with a standard deviation of 15
 	ia.additiveNoise(15),
-	// rotate 30°
-	ia.affineTransform({ rotate: 30 }),
-	// add a blur kernel of 3 pixel
+	// Rotate 30°
+	ia.affine({rotate: 30}),
+	// Add a blur kernel of 3 pixel
 	ia.blur(3)
 ]);
 
-const {images} = basicAugmentation.read('lenna.jpg')
+// tensorflow backend needs Tensor4d <-> filename function
+// see test/examples/simple-example.js for full implementation of those helpers (fileToTensor and tensorToFile)
 
-// images is a tensor4d image 
-// or a [tensor4d] when output images have different shapes
+fileToTensor('test/data/tfjs/lenna.png')
+	.then(({images}) => {
+		return basicAugmentation.read({images});
+	})
+	.then(({images}) => {
+		return tensorToFile('test/data/tfjs/lenna.png', {images});
+	})
+	.then(() => {
+		console.log('done');
+	});
 
 ```
 
