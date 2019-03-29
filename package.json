@@ -4,10 +4,11 @@
   "description": "Image augmentation library for machine learning in javascript.",
   "main": "index.js",
   "scripts": {
+    "benchmark": "DEBUG_COLORS=0 DEBUG=image-augmenter:augmenters:sequential node test/benchmark/benchmark.js",
     "lint": "xo",
-    "test": "nyc ava test/augmenters/*",
-    "semantic-release": "semantic-release",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "doc": "jsdoc lib/augmenters/*.js -d docs -c jsdoc.conf.json",
+    "test": "ava test/augmenters/* test/generators/* --serial",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,9 @@
   },
   "keywords": [
     "image",
+    "tensorflow",
+    "tensorflowjs",
+    "opencv4nodejs",
     "augmentation",
     "augment",
     "imgaug",
@@ -44,17 +48,32 @@
   ],
   "author": "Pierre Colle <piercus@gmail.com>",
   "license": "MIT",
+  "xo": {
+    "rules": {
+      "no-new": 1
+    },
+    "ignores": [
+      "docs"
+    ]
+  },
   "bugs": {
     "url": "https://github.com/piercus/image-augment/issues"
   },
   "homepage": "https://github.com/piercus/image-augment#readme",
   "devDependencies": {
+    "@tensorflow/tfjs-node": "^1.0.0",
+    "@tensorflow/tfjs-node-gpu": "^1.0.0",
     "ava": "^1.2.1",
+    "bluebird": "^3.5.3",
+    "jsdoc": "^3.5.5",
+    "opencv4nodejs": "^4.14.1",
     "semantic-release": "^15.13.3",
     "xo": "^0.24.0"
   },
   "dependencies": {
-    "hasard": "^1.3.1",
-    "opencv4nodejs": "^4.14.1"
+    "debug": "^4.1.1",
+    "hasard": "^1.5.0",
+    "jimp": "^0.6.0",
+    "linear-solve": "^1.2.1"
   }
 }

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: abstract.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: abstract.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const debug = require('debug')('image-augment:augmenters');
+const hasard = require('hasard');
+const Abstract = require('../abstract');
+
+/**
+* @description
+* All augmenters are following the same pattern
+* * First create the augmenter
+* * Then run it
+*   * using `augmenter.readFiles([filename1, filename2, ...])`
+*   * using `augmenter.run({images: &lt;images>, points: &lt;points per image>})`
+*
+* @example
+// Create one simple augmenter
+const augmenter = ia.blur(0.2)
+* @example
+// Augment using filenames
+augmenter.read([filename1, filename2, filename3]).then(({images}) => {
+	console.log(images)
+	// => 3 images
+})
+* @example
+// Run the augmenter 4 times
+augmenter.run({images: [img, img, img, img]}).then(({images}) => {
+	console.log(images)
+	// => 4 images
+})
+* @example
+// follow a point in the augmentation workflow
+augmenter.run({images: images, points: [[[25, 90], [12, 32]]]}).then(({images, points}) => {
+	console.log(points)
+	// => 2 points
+})
+**/
+class AbstractAugmenter extends Abstract {
+	constructor(opts, ia) {
+		super(opts, ia);
+		this._augmenter = true;
+	}
+
+	/**
+	* @typedef {Array.&lt;OpenCVImage> | Tensor4d | Array.&lt;Tensor4d>} Images
+	*/
+	/**
+	* @typedef {Object} AugmenterFormat
+	* @property {Images} images list of images or images batch (with tensorflowjs)
+	* @property {Array.&lt;Point>} points the points to augment
+	* @property {Array.&lt;Box>} boxes bounding boxes to augment
+	*/
+	/**
+	* Augment images and return the result in a pipeable format
+	*
+	* Can be used with different input format :
+	* * Using String or array of strings will be considered as filenames
+	* * Full input format is {images: &lt;Images>, boxes: [[[x1, y1, w1, h1]]], points:[[[x1, y1]]] }
+	*
+	* @param {AugmenterFormat | String | Array.&lt;String> | Images} runOpts {images, points}
+	* @returns {Promise.&lt;AugmenterFormat>} the output is pipeable into other augmenters
+	*/
+	read(runOpts) {
+		if (typeof (runOpts) === 'string') {
+			return this.fromFilenames([runOpts]);
+		}
+
+		if (Array.isArray(runOpts)) {
+			if (runOpts.length === 0) {
+				return {images: this.backend.emptyImage(), points: [], boxes: []};
+			}
+
+			if (typeof (runOpts[0]) === 'string') {
+				return this.fromFilenames({filenames: runOpts});
+			}
+
+			return this.run({images: runOpts});
+		}
+
+		return this.run(runOpts);
+	}
+
+	/**
+	* Augment images
+	* @param {AugmenterFormat|String|Array.&lt;String>|Images} runOpts {images, points}
+	* @returns {Promise} the output is pipeable into other augmenters
+	*/
+	toGrid(runOpts, {gridShape, filename, imageShape}) {
+		return this.read(runOpts).then(({images}) => {
+			return this.backend.writeImagesGrid({
+				filename,
+				gridShape,
+				images,
+				imageShape
+			});
+		});
+	}
+
+	/**
+	* Run the augmenter
+	* @ignore
+	* @param {AugmenterFormat} runOpts {images, points}
+	* @returns {Promise.&lt;AugmenterFormat>} the output is pipeable into other augmenters
+	*/
+	run(runOpts) {
+		let params1;
+		if (runOpts &amp;&amp; runOpts.images &amp;&amp; this.backend.isImages(runOpts.images)) {
+			params1 = runOpts;
+		} else if (this.backend.isImages(runOpts)) {
+			params1 = {images: runOpts};
+		} else {
+			throw (new Error('runOnce must have images in it'));
+		}
+
+		const metadatas = this.backend.getMetadata(params1.images);
+
+		const o2 = Object.assign({}, {metadatas}, params1);
+		const nImages = metadatas.length;
+
+		let resolved = [];
+
+		if (typeof (this.buildAllImagesHasard) === 'function') {
+			resolved = this.buildAllImagesHasard(o2, runOpts).runOnce(runOpts);
+		} else {
+			// Every image hasard is generated independantly
+			for (let i = 0; i &lt; nImages; i++) {
+				debug(`buildHasard ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+				const params = this.buildHasard(Object.assign({}, metadatas[i], params1));
+				debug(`runOnce ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+				const resolvedParams = hasard.isHasard(params) ? params.runOnce(runOpts) : params;
+				resolved.push(resolvedParams);
+			}
+		}
+
+		debug(`augment ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+
+		return Promise.resolve(this.augment(o2, resolved, runOpts));
+	}
+
+	/**
+	* Run the augmenter
+	* @ignore
+	* @param {AugmenterFormat} runOpts {images, points}
+	* @returns {AugmenterFormat} the output is pipeable into other augmenters
+	*/
+	fromFilenames({filenames}) {
+		return this.backend.readImages(filenames).then(images => {
+			return this.run({images}).then(res => {
+				this.backend.dispose(images);
+				return res;
+			});
+		});
+	}
+
+	buildHasard(o) {
+		return this.buildParams(o);
+	}
+
+	checkParams() {
+		// Do nothing
+	}
+
+	/**
+	* @typedef {OneRunOption} MultipleRunOptions
+	* @property {Number} times how many times to run this augmenter
+	*/
+	/**
+	* Run the augmenter
+	* @ignore
+	* @param {OneRunOption | Number | Array.&lt;OneRunOption> | MultipleRunOptions} o options
+	* @returns {Array.&lt;AugmenterFormat>} the output is pipeable into other augmenters
+	*/
+	// run(o) {
+	// 	if (Array.isArray(o)) {
+	// 		return o.map(a => this.run(a));
+	// 	}
+	//
+	// 	if (o &amp;&amp; typeof (o.times) === 'number') {
+	// 		return this.run();
+	// 	}
+	// }
+	augment(attrs, opts, runOpts) {
+		debug(`start augment ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+
+		opts.forEach(o => {
+			this.checkParams(o);
+		});
+		const res = this.backend.splitImages(attrs.images, false).map((image, index) => {
+			const points = ((attrs.points &amp;&amp; attrs.points[index]) || []).map(p => {
+				if (Array.isArray(p)) {
+					return this.backend.point(p[0], p[1]);
+				}
+
+				return p;
+			});
+
+			const newAttrs = Object.assign(
+				{},
+				attrs.metadatas[index],
+				{image}, {images: null},
+				{points},
+				{boxes: (attrs.boxes &amp;&amp; attrs.boxes[index]) || []}
+			);
+			const res = this.augmentOne(
+				newAttrs,
+				opts[index],
+				runOpts
+			);
+			this.backend.dispose(image);
+			return res;
+		});
+		debug(`beforeMerge augment ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+		const newImages = this.backend.mergeImages(res.map(r => r.image), true);
+		debug(`afterMerge augment ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+
+		const res2 = {
+			images: newImages,
+			boxes: res.map(r => r.boxes),
+			points: res.map(r => r.points)
+		};
+		debug(`end augment ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+		return res2;
+	}
+
+	augmentOne(attr, opts, runOpts) {
+		debug(`start augmentOne ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+
+		const res = {
+			image: this.augmentImage(attr, opts, runOpts),
+			boxes: this.augmentBoxes(attr, opts, runOpts),
+			points: this.augmentPoints(attr, opts, runOpts)
+		};
+
+		debug(`end augmentOne ${this._name} (${this.backend._tf &amp;&amp; this.backend._tf.memory().numTensors})`);
+
+		return res;
+	}
+
+	augmentImage() {
+		// By default do nothing
+	}
+
+	augmentPoints({points}) {
+		return points;
+	}
+
+	static isGenerator(o) {
+		return (typeof (o) === 'object' &amp;&amp; o._generator);
+	}
+
+	static isAugmenter(o) {
+		return (typeof (o) === 'object' &amp;&amp; o._augmenter);
+	}
+
+	augmentBoxes(attr, opts) {
+		const {boxes} = attr;
+		const points = boxes.map(b => {
+			return [
+				this.backend.point(b[0], b[1]),
+				this.backend.point(b[0] + b[2], b[1]),
+				this.backend.point(b[0], b[1] + b[3]),
+				this.backend.point(b[0] + b[2], b[1] + b[3])
+			];
+		}).reduce((a, b) => a.concat(b), []);
+
+		const pointsAfter = this.augmentPoints(Object.assign({}, attr, {points}), opts);
+
+		const boxesAfter = [];
+		for (let i = 0; i &lt; boxes.length; i++) {
+			const left = Math.min(...pointsAfter.map(p => p.x));
+			const right = Math.max(...pointsAfter.map(p => p.x));
+			const top = Math.min(...pointsAfter.map(p => p.y));
+			const bottom = Math.max(...pointsAfter.map(p => p.y));
+
+			boxesAfter.push([
+				left,
+				top,
+				right - left,
+				bottom - top
+			]);
+		}
+
+		return boxesAfter;
+	}
+}
+
+module.exports = AbstractAugmenter;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AbstractAugmenter.html">AbstractAugmenter</a></li><li><a href="AddAugmenter.html">AddAugmenter</a></li><li><a href="AdditiveGaussianNoiseAugmenter.html">AdditiveGaussianNoiseAugmenter</a></li><li><a href="AdditiveNoiseAugmenter.html">AdditiveNoiseAugmenter</a></li><li><a href="AdditivePoissonNoiseAugmenter.html">AdditivePoissonNoiseAugmenter</a></li><li><a href="AddWeightedAugmenter.html">AddWeightedAugmenter</a></li><li><a href="AffineTransformAugmenter.html">AffineTransformAugmenter</a></li><li><a href="BackgroundAugmenter.html">BackgroundAugmenter</a></li><li><a href="BlurAugmenter.html">BlurAugmenter</a></li><li><a href="CropAugmenter.html">CropAugmenter</a></li><li><a href="CropToBoxAugmenter.html">CropToBoxAugmenter</a></li><li><a href="DrawBoxesAugmenter.html">DrawBoxesAugmenter</a></li><li><a href="FliplrAugmenter.html">FliplrAugmenter</a></li><li><a href="FlipudAugmenter.html">FlipudAugmenter</a></li><li><a href="IdentityAugmenter.html">IdentityAugmenter</a></li><li><a href="PadAugmenter.html">PadAugmenter</a></li><li><a href="PerspectiveTransformAugmenter.html">PerspectiveTransformAugmenter</a></li><li><a href="ResizeAugmenter.html">ResizeAugmenter</a></li><li><a href="Sequential.html">Sequential</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 28 2019 18:26:11 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
