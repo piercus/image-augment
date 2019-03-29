@@ -36,7 +36,10 @@ module.exports = function ({filename, title = 'Benchmark', description = 'benchm
 	const cstrNames = uniq(data.filter(({cstrName}) => Boolean(cstrName)).map(({cstrName}) => cstrName));
 	const backendKeys = uniq(data.filter(({backendKey}) => Boolean(backendKey)).map(({backendKey}) => backendKey));
 	// Create a markdown table
-	const strMd = '## ' + title + '\n\n' + description + '\n\n| | ' + backendKeys.join(' | ') + ' |\n' +
+	const strMd = '## ' + title + '\n\n' 
+		+ description + '\n\n'
+		+ '| | ' + backendKeys.join(' | ') + ' |\n' +
+		+ '|---|' + backendKeys.map(() => '---').join('|') + '|\n' +
 		cstrNames.map(cstrName => {
 			return '| ' + cstrName + ' | ' + backendKeys.map(key => {
 				// Console.log(durations[cstrName+'/'+key], cstrName, key)
