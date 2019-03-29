@@ -7,7 +7,7 @@ const nImages = 5;
 
 test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTruncatedNormalNoise, {
 	inputFilenames: new Array(nImages).fill('lenna.png'),
-	// BackendLibs: [require('opencv4nodejs')],
+	backendLibs: [require('@tensorflow/tfjs-node')],
 	expectImg(t, mats1, mats2, backend) {
 		const metadatas = backend.getMetadata(mats1);
 		const metadata = metadatas[0];
@@ -23,8 +23,8 @@ test('additiveTruncatedNormalNoise not perChannel', macroAugmenter, AdditiveTrun
 		const m2 = backend.imageToArray(mats2);
 
 		backend.forEachPixel(diff, ([b, g, r], batchIndex, rowIndex, colIndex) => {
-			// Console.log(m2[batchIndex] && m2[batchIndex][rowIndex])
 			if (m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(255) === -1 && m2[batchIndex][rowIndex][colIndex].slice(0, 3).indexOf(0) === -1 && (r !== g || g !== b)) {
+				console.log(m2[batchIndex] && m2[batchIndex][rowIndex][colIndex], [r, g, b]);
 				count++;
 			}
 		});
