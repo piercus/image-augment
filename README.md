@@ -4,8 +4,8 @@ Augment images (geometric, noise, ...) for visual machine learning data augmenta
 
 This library has been freely inspired from [imgaug](https://github.com/aleju/imgaug)
 
-It is made to work 
-* with [hasard](https://www.npmjs.com/package/hasard) for randomness fine customization
+This library is intend to work
+* with [hasard](https://www.npmjs.com/package/hasard) for randomness 
 * with 2 different backends :
   * [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs)
   * [tensorflowjs](https://github.com/tensorflow/tfjs)
@@ -50,7 +50,7 @@ const {images} = basicAugmentation.read('lenna.jpg')
 
 Output is :
 
-<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-example.png'/>
+<img src='https://raw.githubusercontent.com/piercus/image-augment/master/test/data/tfjs/lenna-grid.png'/>
 
 ## Grid example with opencv4nodejs
 
