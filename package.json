@@ -50,7 +50,8 @@
   "license": "MIT",
   "xo": {
     "rules": {
-      "no-new": 1
+      "no-new": 1,
+      "ava/no-import-test-files": 1
     },
     "ignores": [
       "docs"
@@ -74,7 +75,6 @@
   "dependencies": {
     "debug": "^4.1.1",
     "hasard": "^1.5.0",
-    "jimp": "^0.6.0",
     "linear-solve": "^1.2.1"
   }
 }

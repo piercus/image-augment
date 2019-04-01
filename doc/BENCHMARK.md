@@ -7,6 +7,7 @@ See the [benchmark code](../test/benchmark/benchmark.js)
 See the [benchmark result image grid](../test/benchmark/output)
 
 | | opencv4nodejs | tfjs |
+|---|---|---|
 | AddWeightedAugmenter | 1251 ms | 828 ms |
 | AddAugmenter | 1256 ms | 293 ms |
 | AdditiveNoiseAugmenter | 206835 ms | 93 ms |

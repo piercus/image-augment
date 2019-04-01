@@ -2,6 +2,8 @@ const path = require('path');
 const debug = require('debug')('image-augment:test:augmenter');
 const PromiseBlue = require('bluebird');
 const allBackends = require('../../lib/backend');
+const filesToImages = require('../helpers/files-to-images.js');
+const imagesToFiles = require('../helpers/images-to-files.js');
 
 module.exports = function (t, Cstr, {
 	inputFilename,
@@ -46,7 +48,7 @@ module.exports = function (t, Cstr, {
 		// 	console.log(backend.backendLib.memory().numTensors, startNumTensors);
 		// }
 
-		return backend.readImages(inputs)
+		return filesToImages(inputs, backend)
 			.then(images => {
 				// Console.log(backend.backendLib.memory().numTensors, startNumTensors);
 				debug(`${Cstr.name}/${backend.key} start `);
@@ -71,9 +73,10 @@ module.exports = function (t, Cstr, {
 
 						debug(`Save file for debugging in ${dbgOutput} (${backend._tf && backend._tf.memory().numTensors})`);
 
-						return backend.writeImages(
+						return imagesToFiles(
 							Array.isArray(dbgOutput) ? dbgOutput : [dbgOutput],
-							res.images
+							res.images,
+							backend
 						).then(() => {
 							return res;
 						});
@@ -92,14 +95,14 @@ module.exports = function (t, Cstr, {
 						// }
 
 						return promise.then(() => {
-							return backend.readImage(output);
+							return filesToImages(output, backend);
 						}).then(expected => {
 							if (!expected) {
 								throw (new Error(`Cannot open ${output}`));
 							}
 
 							return Promise.all([
-								backend.imagesToBuffer([expected]),
+								backend.imagesToBuffer(expected),
 								backend.imagesToBuffer(res.images)
 							]).then(([actual2, expected2]) => {
 								t.true(actual2.equals(expected2), `Failed on "${backend.key}" backend while comparing to "${output}"`);

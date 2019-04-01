@@ -99,7 +99,6 @@ const seq = ia.sequential({
 	],
 	randomOrder: true
 });
-
 const image = cv.imread('test/data/opencv4nodejs/lenna.png');
 
 seq.toGrid({images: [image, image, image, image, image, image, image, image]}, {
@@ -119,6 +118,7 @@ Output :
 const h = require('hasard');
 const tf = require('@tensorflow/tfjs-node');
 const ia = require('image-augment')(tf);
+
 
 // Random example images
 const sometimes = (aug => h.value([aug, ia.identity()]));
@@ -152,11 +152,18 @@ const seq = ia.sequential({
 	randomOrder: true
 });
 
-seq.toGrid(new Array(8).fill('test/data/opencv4nodejs/lenna.png'), {
-	filename: 'test/data/tfjs/lenna-grid.png',
-	imageShape: [300, 300],
-	gridShape: [4, 2]
-});
+// tensorflow backend needs Tensor4d <-> filename function
+// see test/helpers/files-to-images for full implementation of those helpers (fileToTensor and tensorToFile)
+const filenames = new Array(8).fill('test/data/opencv4nodejs/lenna.png');
+
+filesToImages(filenames, seq.backend).then(images => {
+	seq.toGrid({images}, {
+		filename: 'test/data/tfjs/lenna-grid.png',
+		imageShape: [300, 300],
+		gridShape: [4, 2]
+	});
+})
+
 ```
 Output :
 
@@ -194,11 +201,11 @@ Help appreciated, please [open an issue](https://github.com/piercus/image-augmen
 - [x] Run all unit tests on Travis
 - [x] Implement perspective Transform using tensorflowjs backend
 - [x] Put documentation on github pages
+- [x] Remove jimp deps
+- [ ] create a demo app running in the browser with tfjs + webgl
 - [ ] Auto documentation update with travis
-- [ ] Remove jimp deps
 - [ ] Speed up all non-batch implemented tensorflow augmenters
 - [ ] Add more augmenters
 - [ ] Add unit test and examples for cropToBox and DrawBoxes
 - [ ] Stream API
-- [ ] create a demo app running in the browser with tfjs + webgl
 - [ ] Faster gaussian and poisson noise generators
