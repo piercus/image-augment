@@ -29,7 +29,7 @@ const tf = require('@tensorflow/tfjs-node');
 
 // Then initialize with the backend
 
-const ia = require('../..')(tf);
+const ia = require('image-augment')(tf);
 
 // Create an augmentation pipeline
 const basicAugmentation = ia.sequential([
