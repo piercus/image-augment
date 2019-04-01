@@ -34,7 +34,7 @@ module.exports = function (filenames, ims, backend) {
 
 	return Promise.all(filenames.map((f, i) => {
 		if (backend.key === 'tfjs') {
-			return tensorToFile(f, images[i], backend.backendLib).then(b => {
+			return tensorToFile(f, images[i], backend.backendLib).then(() => {
 				backend.dispose(images[i]);
 			});
 		}
