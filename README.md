@@ -203,7 +203,6 @@ Help appreciated, please [open an issue](https://github.com/piercus/image-augmen
 - [x] Put documentation on github pages
 - [x] Remove jimp deps
 - [ ] create a demo app running in the browser with tfjs + webgl
-- [ ] Auto documentation update with travis
 - [ ] Speed up all non-batch implemented tensorflow augmenters
 - [ ] Add more augmenters
 - [ ] Add unit test and examples for cropToBox and DrawBoxes
