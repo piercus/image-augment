@@ -1,6 +1,7 @@
 const PromiseBlue = require('bluebird');
 const debug = require('debug')('image-augment:test:generator');
 const allBackends = require('../../lib/backend');
+const imagesToFiles = require('../helpers/images-to-files.js');
 
 module.exports = function (t, Cstr, {
 	debugOutput,
@@ -29,7 +30,7 @@ module.exports = function (t, Cstr, {
 					return Promise.resolve();
 				}
 
-				return backend.writeImages(debugOutput, res.images);
+				return imagesToFiles(debugOutput, res.images, backend);
 			})
 			.then(() => {
 				if (!expectImg) {

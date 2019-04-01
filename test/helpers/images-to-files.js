@@ -26,22 +26,21 @@ module.exports = function (filenames, ims, backend) {
 		filenames = [filenames];
 	}
 
-	return backend.splitImages(ims)
-		.then(images => {
-			if (images.length !== filenames.length) {
-				return Promise.reject(new Error('lenght should match'));
-			}
+	const images = backend.splitImages(ims);
 
-			return Promise.all(filenames.map((f, i) => {
-				if (backend.key === 'tfjs') {
-					return tensorToFile(f, images[i], backend.backendLib);
-				}
+	if (images.length !== filenames.length) {
+		return Promise.reject(new Error('lenght should match'));
+	}
 
-				if (backend.key === 'opencv4nodejs') {
-					return cvToFile(f, images[i], backend.backendLib);
-				}
+	return Promise.all(filenames.map((f, i) => {
+		if (backend.key === 'tfjs') {
+			return tensorToFile(f, images[i], backend.backendLib);
+		}
 
-				throw (new Error('unkowned backend'));
-			}));
-		});
+		if (backend.key === 'opencv4nodejs') {
+			return cvToFile(f, images[i], backend.backendLib);
+		}
+
+		throw (new Error('unkowned backend'));
+	}));
 };
