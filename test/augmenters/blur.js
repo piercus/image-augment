@@ -25,3 +25,11 @@ test('blur kernel 6x1', macroAugmenter, Blur, {
 		kernel: [6, 1]
 	}
 });
+
+test('blur kernel 0', macroAugmenter, Blur, {
+	inputFilename: 'lenna.png',
+	outputFilename: 'lenna.png',
+	options: {
+		kernel: 0
+	}
+});

@@ -10,4 +10,3 @@ test('blur kernel 3', macroAugmenter, Add, {
 		value: [100, -10, -10]
 	}
 });
-
