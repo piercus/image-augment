@@ -1,3 +1,5 @@
+const filesToImages = require('../helpers/files-to-images');
+const imagesToFile = require('../helpers/images-to-files');
 const h = require('hasard');
 const tf = require('@tensorflow/tfjs-node');
 const ia = require('../..')(tf);
@@ -34,9 +36,17 @@ const seq = ia.sequential({
 	randomOrder: true
 });
 
-seq.toGrid(new Array(8).fill('test/data/opencv4nodejs/lenna.png'), {
-	filename: 'test/data/tfjs/lenna-grid.png',
-	imageShape: [300, 300],
-	gridShape: [4, 2]
-});
+const filenames = new Array(8).fill('test/data/opencv4nodejs/lenna.png');
 
+filesToImages(filenames, seq.backend).then(images => {
+	return seq.toGrid({images}, {
+		filename: 'test/data/tfjs/lenna-grid.png',
+		imageShape: [300, 300],
+		gridShape: [4, 2]
+	}).then(grid => {
+		return imagesToFile('test/data/tfjs/lenna-grid.png', grid, seq.backend);
+	})
+})
+.then(() => {
+	console.log('done');
+})
