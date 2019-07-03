@@ -1,7 +1,7 @@
-const filesToImages = require('../helpers/files-to-images');
-const imagesToFile = require('../helpers/images-to-files');
 const h = require('hasard');
 const tf = require('@tensorflow/tfjs-node');
+const filesToImages = require('../helpers/files-to-images');
+const imagesToFile = require('../helpers/images-to-files');
 const ia = require('../..')(tf);
 
 // Random example images
@@ -45,8 +45,8 @@ filesToImages(filenames, seq.backend).then(images => {
 		gridShape: [4, 2]
 	}).then(grid => {
 		return imagesToFile('test/data/tfjs/lenna-grid.png', grid, seq.backend);
-	})
+	});
 })
-.then(() => {
-	console.log('done');
-})
+	.then(() => {
+		console.log('done');
+	});
