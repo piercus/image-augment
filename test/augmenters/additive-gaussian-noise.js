@@ -56,3 +56,21 @@ test('additiveGaussianNoise per Channel', macroAugmenter, AdditiveGaussianNoise,
 		perChannel: true
 	}
 });
+
+test('additiveGaussianNoise per Channel with alpha image', macroAugmenter, AdditiveGaussianNoise, {
+	inputFilename: 'lenna-pad-transparent-10x30x0x5.png',
+	expectImg(t, mats1, mats2, backend) {
+		const diff = backend.diff(mats2, mats1);
+		backend.forEachPixel(diff, ([b, g, r, a], rowIndex, colIndex) => {
+			if(rowIndex === colIndex && rowIndex < 5){
+				t.is(a, 0);
+			}
+		});
+		backend.dispose(diff);
+	},
+	options: {
+		mean,
+		sigma: 2,
+		perChannel: false
+	}
+});
