@@ -62,7 +62,7 @@ test('additiveGaussianNoise per Channel with alpha image', macroAugmenter, Addit
 	expectImg(t, mats1, mats2, backend) {
 		const diff = backend.diff(mats2, mats1);
 		backend.forEachPixel(diff, ([b, g, r, a], rowIndex, colIndex) => {
-			if(rowIndex === colIndex && rowIndex < 5){
+			if (rowIndex === colIndex && rowIndex < 5) {
 				t.is(a, 0);
 			}
 		});
